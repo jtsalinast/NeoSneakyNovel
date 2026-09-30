@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StorySmith — estudio de novelas local</title>
+<style>
+:root{
+  --bg:#f6f4ef; --panel:#ffffff; --ink:#2b2620; --muted:#7a7166;
+  --accent:#8a5a33; --accent2:#5a7d4f; --danger:#a33; --line:#e3ddd2;
+  --chip:#efe9dd; --code:#fbf9f4;
+}
+[data-theme="dark"]{
+  --bg:#1c1a17; --panel:#26231f; --ink:#e8e2d6; --muted:#9a9184;
+  --accent:#c98a55; --accent2:#8fae7e; --danger:#d66; --line:#3a362f;
+  --chip:#312d27; --code:#221f1b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Georgia,'Times New Roman',serif}
+header{display:flex;align-items:center;gap:14px;padding:10px 18px;background:var(--panel);border-bottom:1px solid var(--line)}
+header h1{font-size:19px;margin:0;letter-spacing:.5px}
+header .proj{font-size:13px;color:var(--muted)}
+nav{display:flex;gap:4px;flex-wrap:wrap;padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line)}
+nav button{font:inherit;font-size:14px;padding:7px 14px;border:1px solid transparent;border-radius:8px 8px 0 0;background:none;color:var(--muted);cursor:pointer}
+nav button.on{color:var(--ink);background:var(--bg);border-color:var(--line);border-bottom-color:var(--bg);font-weight:bold}
+main{padding:18px;max-width:1100px;margin:0 auto}
+section.tab{display:none}
+section.tab.on{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.card h3{margin:0 0 10px;font-size:16px}
+label{display:block;font-size:13px;color:var(--muted);margin:9px 0 3px}
+input[type=text],input[type=password],input[type=number],select,textarea{
+  width:100%;font:inherit;font-size:14px;padding:7px 9px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink)}
+textarea{resize:vertical}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+button.btn{font:inherit;font-size:14px;padding:8px 16px;border-radius:8px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+button.btn:hover{filter:brightness(.96)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.green{background:var(--accent2);border-color:var(--accent2);color:#fff}
+button.red{background:var(--danger);border-color:var(--danger);color:#fff}
+button:disabled{opacity:.5;cursor:not-allowed}
+.hint{font-size:12px;color:var(--muted)}
+.status{font-size:13px;margin-top:8px;min-height:18px}
+.ok{color:var(--accent2)} .err{color:var(--danger)}
+#logbar{position:fixed;left:0;right:0;bottom:0;max-height:120px;overflow-y:auto;background:#191713;color:#d8d2c4;font:12px/1.45 Menlo,Consolas,monospace;padding:6px 12px;border-top:2px solid var(--accent)}
+#logbar .lvl-error{color:#ff9a8a} #logbar .lvl-warn{color:#ffd47e} #logbar .lvl-success{color:#9fd08a}
+.chaplist{list-style:none;margin:0;padding:0}
+.chaplist li{padding:7px 9px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;background:var(--panel);cursor:pointer;display:flex;justify-content:space-between;gap:8px}
+.chaplist li.sel{outline:2px solid var(--accent)}
+.chaplist .meta{color:var(--muted);font-size:12px;white-space:nowrap}
+.outline-ch{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;background:var(--panel)}
+.outline-ch b{font-size:14px}
+.badge{display:inline-block;font-size:11px;padding:1px 8px;border-radius:10px;background:var(--chip);color:var(--muted);margin-left:6px}
+.badge.confirmed{background:var(--accent2);color:#fff}
+.badge.pending{background:#d9a441;color:#fff}
+.prose{white-space:pre-wrap;font-size:15px;line-height:1.7;background:var(--code);border:1px solid var(--line);border-radius:8px;padding:14px;min-height:120px;max-height:60vh;overflow:auto}
+.beats{font-size:12px;color:var(--muted);margin-top:4px}
+table{border-collapse:collapse;width:100%}
+td,th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}
+.spacer{height:130px}
+progress{width:100%;height:8px}
+@media (max-width:720px){ main{padding:12px} header{flex-wrap:wrap} }
+</style>
+</head>
+<body>
+<header>
+  <h1>✒️ StorySmith</h1>
+  <span class="proj" id="hdrProject">— sin proyecto —</span>
+  <span style="flex:1"></span>
+  <span class="hint" id="hdrModel"></span>
+  <button class="btn" id="btnLang" title="Cambiar idioma de mensajes del sistema">ES/EN</button>
+  <button class="btn" id="btnTheme" title="Tema claro/oscuro">☾</button>
+</header>
+<nav id="tabs">
+  <button data-tab="projects" class="on">Proyectos</button>
+  <button data-tab="params">Parámetros de novela</button>
+  <button data-tab="config">Configuración API</button>
+  <button data-tab="outline">Outline</button>
+  <button data-tab="writing">Escritura</button>
+</nav>
+<main>
+
+<!-- ============ PROJECTS ============ -->
+<section class="tab on" id="tab-projects">
+  <div class="grid">
+    <div class="card">
+      <h3>Proyecto actual</h3>
+      <div id="curProj"><span class="hint">Crea o selecciona un proyecto para empezar.</span></div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn red" id="btnDeleteProj">Eliminar proyecto…</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Nuevo proyecto</h3>
+      <label>Nombre del proyecto (carpeta)</label>
+      <input type="text" id="newProjName" placeholder="mi-novela">
+      <label>Título de la novela</label>
+      <input type="text" id="newProjTitle" placeholder="El último faro">
+      <div class="row" style="margin-top:6px">
+        <div style="flex:1"><label>Género</label><select id="newProjGenre"></select></div>
+        <div style="flex:1"><label>Longitud</label><select id="newProjLength"></select></div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn primary" id="btnCreateProj">Crear y seleccionar</button>
+      </div>
+      <div class="status" id="projStatus"></div>
+    </div>
+    <div class="card">
+      <h3>Proyectos guardados</h3>
+      <ul class="chaplist" id="projList"></ul>
+      <div class="row" style="margin-top:8px"><button class="btn" id="btnRefreshProjects">Actualizar</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NOVEL PARAMETERS ============ -->
+<section class="tab" id="tab-params">
+  <div class="grid">
+    <div class="card">
+      <h3>Mundo y estructura</h3>
+      <div class="row">
+        <div style="flex:1"><label>Género</label><select id="pGenre"></select></div>
+        <div style="flex:1"><label>Subgénero</label><select id="pSubgenre"></select></div>
+      </div>
+      <div class="row">
+        <div style="flex:1"><label>Longitud</label><select id="pLength"></select></div>
+        <div style="flex:1"><label>Estructura narrativa</label><select id="pStructure"></select></div>
+      </div>
+      <div class="beats" id="pBeats"></div>
+      <label>Tono</label><select id="pTone"></select>
+      <label>Escala del conflicto</label><select id="pConflict"></select>
+      <label>Época / marco temporal</label><input type="text" id="pTimeframe">
+      <label>Ubicaciones principales</label><input type="text" id="pLocations">
+    </div>
+    <div class="card">
+      <h3>Personaje y enfoque</h3>
+      <label>Tipo de protagonista</label><select id="pProtagonist"></select>
+      <label>Cuota femenina (%)</label><select id="pGender"></select>
+      <label>Nivel de romance</label>
+      <select id="pRomance"><option value="">—</option><option>None</option><option>Subplot</option><option>Moderate</option><option>Central</option></select>
+      <label>Contenido sexual</label>
+      <select id="pSexual"><option value="">—</option><option>Clean</option><option>Fade to black</option><option>Explicit</option></select>
+      <label>Oscuridad del mundo (1–5)</label><input type="range" id="pDarkness" min="1" max="5" step="1" value="3"><span class="hint" id="pDarknessV">3</span>
+      <label>Densidad especulativa (1–5)</label><input type="range" id="pSpecDensity" min="1" max="5" step="1" value="3"><span class="hint" id="pSpecDensityV">3</span>
+    </div>
+    <div class="card">
+      <h3>Ajustes clásicos</h3>
+      <label>Título</label><input type="text" id="pTitle">
+      <label>Palabras objetivo por capítulo</label><input type="number" id="pWords" min="500" max="20000" step="250">
+      <label>Estilo de escritura</label><input type="text" id="pStyle" placeholder="lírica y contenida, prosa visual…">
+      <label>Punto de vista</label>
+      <select id="pPOV">
+        <option value="">—</option>
+        <option>Primera persona</option>
+        <option>Tercera persona limitada</option>
+        <option>Tercera persona omnisciente</option>
+        <option>Segunda persona</option>
+        <option>Múltiples POV (alternancia)</option>
+      </select>
+      <div class="row" style="margin-top:14px">
+        <button class="btn primary" id="btnSaveParams">Guardar parámetros</button>
+        <button class="btn" id="btnReloadParams">Recargar</button>
+      </div>
+      <div class="status" id="paramStatus"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ API CONFIG ============ -->
+<section class="tab" id="tab-config">
+  <div class="grid">
+    <div class="card">
+      <h3>Conexión al modelo (Ollama u OpenAI-compatible)</h3>
+      <label>Base URL</label>
+      <div class="row">
+        <input type="text" id="cfgBase" style="flex:1" placeholder="http://localhost:11434/v1">
+        <button class="btn" id="btnModels" title="Consultar modelos instalados en Ollama">Modelos</button>
+      </div>
+      <select id="cfgModelList" style="display:none;margin-top:6px"></select>
+      <label>Modelo</label>
+      <input type="text" id="cfgModel" placeholder="qwen2.5:14b">
+      <label>API key (opcional con Ollama)</label>
+      <input type="password" id="cfgKey" autocomplete="off">
+      <div class="row">
+        <div style="flex:1"><label>Max tokens (salida)</label><input type="number" id="cfgMaxTokens" min="512" step="512"></div>
+        <div style="flex:1"><label>Presupuesto de contexto</label><input type="number" id="cfgCtx" min="1024" step="1024"></div>
+        <div style="flex:1"><label>Timeout HTTP (s)</label><input type="number" id="cfgTimeout" min="30" step="30"></div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn primary" id="btnSaveCfg">Guardar</button>
+        <button class="btn green" id="btnTestCfg">Probar conexión</button>
+      </div>
+      <div class="status" id="cfgStatus"></div>
+    </div>
+    <div class="card">
+      <h3>Estado del servidor</h3>
+      <table>
+        <tr><th colspan="2" id="verRow">Versión: …</th></tr>
+        <tr><td>Tarea activa</td><td id="stTask">no</td></tr>
+        <tr><td>Fase</td><td id="stPhase">—</td></tr>
+        <tr><td>Capítulos escritos</td><td id="stChaps">—</td></tr>
+      </table>
+      <div class="hint" style="margin-top:10px">
+        Con Ollama: deja la API key vacía y usa
+        <code>http://localhost:11434/v1</code>. Cualquier endpoint compatible
+        con OpenAI (<code>/chat/completions</code>) también funciona.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OUTLINE ============ -->
+<section class="tab" id="tab-outline">
+  <div class="grid" style="grid-template-columns:340px 1fr">
+    <div class="card">
+      <h3>Generar outline</h3>
+      <label>Número de capítulos (1–36)</label>
+      <input type="number" id="olCount" min="1" max="36" value="12">
+      <label>Idea / premisa (opcional)</label>
+      <textarea id="olIdea" rows="5" placeholder="Una cartógrafa hereda un faro que dibuja mapas del futuro…"></textarea>
+      <div class="row" style="margin-top:12px">
+        <button class="btn primary" id="btnGenOutline">Generar outline</button>
+        <button class="btn red" id="btnCancelTask1" style="display:none">Cancelar</button>
+      </div>
+      <div class="status" id="olStatus"></div>
+    </div>
+    <div class="card">
+      <h3>Outline <span id="olBadge" class="badge">—</span></h3>
+      <div id="olMeta" class="hint"></div>
+      <div id="olBody" style="margin-top:10px"><span class="hint">Sin outline todavía.</span></div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn green" id="btnConfirmOutline" style="display:none">✔ Confirmar outline</button>
+        <button class="btn" id="btnUnconfirmOutline" style="display:none">Revocar confirmación</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WRITING ============ -->
+<section class="tab" id="tab-writing">
+  <div class="grid" style="grid-template-columns:280px 1fr">
+    <div class="card">
+      <h3>Capítulos</h3>
+      <ul class="chaplist" id="chapList"></ul>
+      <div class="row" style="margin-top:8px"><button class="btn" id="btnRefreshChaps">Actualizar</button></div>
+    </div>
+    <div class="card">
+      <h3 id="chapHeading">Capítulo</h3>
+      <label>Feedback para reescritura (opcional)</label>
+      <textarea id="chFeedback" rows="2" placeholder="Más tensión en la escena final, menos adjetivos…"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button class="btn primary" id="btnWriteChap">Escribir / reescribir</button>
+        <button class="btn red" id="btnCancelTask2" style="display:none">Cancelar</button>
+      </div>
+      <progress id="chProg" max="1" value="0" style="display:none"></progress>
+      <div class="prose" id="chText" style="margin-top:12px"><span class="hint">Selecciona un capítulo.</span></div>
+    </div>
+  </div>
+</section>
+
+</main>
+<div class="spacer"></div>
+<div id="logbar"></div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+let LANG=localStorage.getItem("ss_lang")||"en";
+let opts=null, status={}, currentProj="", selChapter=1;
+
+/* ---------- helpers ---------- */
+async function api(path,method,body){
+  const r=await fetch(path,{method:method||"GET",
+    headers:{"Content-Type":"application/json","X-UI-Locale":LANG},
+    body:body===undefined?undefined:JSON.stringify(body)});
+  let data=null; try{data=await r.json();}catch(e){}
+  if(!r.ok) throw new Error((data&&data.error)||("HTTP "+r.status));
+  return data;
+}
+function setSt(el,msg,cls){el.textContent=msg||"";el.className="status "+(cls||"");}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function log(entry){
+  const d=document.createElement("div");
+  d.className="lvl-"+(entry.level||"info");
+  const m=(LANG==="en"?(entry.msg_en||entry.msg):(entry.msg||entry.msg_en))||entry.msg_key||"";
+  d.textContent="["+esc(entry.time||"")+"] "+esc(m);
+  const bar=$("logbar"); bar.appendChild(d); bar.scrollTop=bar.scrollHeight;
+  while(bar.children.length>200) bar.removeChild(bar.firstChild);
+}
+function fillSelect(sel,items,val,keepEmpty){
+  const cur=val!==undefined&&val!==null?val:sel.value;
+  sel.innerHTML=keepEmpty===false?"":'<option value="">—</option>';
+  for(const v of items||[]){const o=document.createElement("option");o.value=o.textContent=v;sel.appendChild(o);}
+  if(cur&&[...sel.options].some(o=>o.value===cur)) sel.value=cur;
+}
+
+/* ---------- tabs ---------- */
+$("tabs").addEventListener("click",e=>{
+  if(e.target.tagName!=="BUTTON")return;
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b===e.target));
+  document.querySelectorAll("section.tab").forEach(s=>s.classList.toggle("on",s.id==="tab-"+e.target.dataset.tab));
+  const t=e.target.dataset.tab;
+  if(t==="outline") loadOutline();
+  if(t==="writing"){ refreshStatus(); loadChapters(); loadChapter(); }
+  if(t==="params") loadParams();
+});
+$("btnTheme").onclick=()=>{
+  const dark=document.documentElement.getAttribute("data-theme")==="dark";
+  document.documentElement.setAttribute("data-theme",dark?"":"dark");
+  $("btnTheme").textContent=dark?"☾":"☀"; localStorage.setItem("ss_theme",dark?"":"dark");
+};
+if(localStorage.getItem("ss_theme")==="dark"){document.documentElement.setAttribute("data-theme","dark");$("btnTheme").textContent="☀";}
+$("btnLang").onclick=()=>{LANG=LANG==="en"?"zh":"en";localStorage.setItem("ss_lang",LANG);refreshAll();};
+
+/* ---------- catalogue / params ---------- */
+async function loadOptions(){
+  opts=await api("/api/parameters/options");
+  fillSelect($("newProjGenre"),opts.genres,"Fantasy",false);
+  fillSelect($("newProjLength"),opts.length_options,"Novel (Standard)",false);
+  fillSelect($("pGenre"),opts.genres,null);
+  fillSelect($("pLength"),opts.length_options,null);
+  syncStructures();
+  $("pGender").innerHTML="<option value=''>—</option>";
+  for(const k of Object.keys(opts.gender_bias||{})){
+    const b=opts.gender_bias[k];const o=document.createElement("option");
+    o.value=k;o.textContent=`${k} (${b.female}% F)`;$("pGender").appendChild(o);
+  }
+}
+function syncStructures(){
+  const len=$("pLength").value||"Novel (Standard)";
+  const list=(opts.structure_map&&opts.structure_map[len])||[];
+  fillSelect($("pStructure"),list,(opts.default_structure||{})[len]);
+  showBeats();
+}
+function showBeats(){
+  const st=$("pStructure").value;
+  const beats=(opts.structure_sections&&opts.structure_sections[st])||[];
+  $("pBeats").textContent=beats.length?("Beats: "+beats.join(" → ")):("");
+}
+$("pGenre").onchange=()=>{ fillSelect($("pSubgenre"),(opts.subgenres||{})[$("pGenre").value]||[],null); };
+$("pLength").onchange=syncStructures;
+$("pStructure").onchange=showBeats;
+$("pDarkness").oninput=function(){$("pDarknessV").textContent=this.value;};
+$("pSpecDensity").oninput=function(){$("pSpecDensityV").textContent=this.value;};
+
+async function loadParams(){
+  if(!currentProj){setSt($("paramStatus"),"Selecciona primero un proyecto (pestaña Proyectos).","err");return;}
+  try{
+    const p=await api("/api/parameters");
+    $("pGenre").value=p.genre||"";
+    fillSelect($("pSubgenre"),(opts.subgenres||{})[p.genre]||[],p.subgenre);
+    $("pLength").value=p.novel_length||""; syncStructures();
+    $("pStructure").value=p.structure||""; showBeats();
+    $("pTitle").value=p.title||""; $("pWords").value=p.target_words_per_chapter||5000;
+    $("pStyle").value=p.writing_style||""; $("pPOV").value=p.writing_pov||"";
+    fillSelect($("pTone"),(p.tone_hints||[]).concat(p.tone?[p.tone]:[]),p.tone||"");
+    fillSelect($("pConflict"),(p.conflict_scale_hints||[]).concat(p.conflict_scale?[p.conflict_scale]:[]),p.conflict_scale||"");
+    fillSelect($("pProtagonist"),(p.protagonist_hints||[]).concat(p.protagonist_type?[p.protagonist_type]:[]),p.protagonist_type||"");
+    $("pTimeframe").value=p.timeframe||""; $("pLocations").value=p.locations||"";
+    $("pGender").value=p.gender_ratio||"";
+    $("pRomance").value=p.romance_level||""; $("pSexual").value=p.sexual_content||"";
+    $("pDarkness").value=p.darkness_level||3; $("pDarknessV").textContent=$("pDarkness").value;
+    $("pSpecDensity").value=p.speculative_density||3; $("pSpecDensityV").textContent=$("pSpecDensity").value;
+    setSt($("paramStatus"),"","ok");
+  }catch(e){setSt($("paramStatus"),e.message,"err");}
+}
+$("btnSaveParams").onclick=async()=>{
+  const body={
+    genre:$("pGenre").value,subgenre:$("pSubgenre").value,novel_length:$("pLength").value,
+    structure:$("pStructure").value,title:$("pTitle").value,
+    target_words_per_chapter:+$("pWords").value||5000,
+    writing_style:$("pStyle").value,writing_pov:$("pPOV").value,
+    protagonist_type:$("pProtagonist").value,conflict_scale:$("pConflict").value,
+    tone:$("pTone").value,timeframe:$("pTimeframe").value,locations:$("pLocations").value,
+    gender_ratio:$("pGender").value,romance_level:$("pRomance").value,
+    sexual_content:$("pSexual").value,darkness_level:+$("pDarkness").value,
+    speculative_density:+$("pSpecDensity").value};
+  try{await api("/api/parameters","PUT",body);setSt($("paramStatus"),LANG==="en"?"Saved.":"Guardado.","ok");}
+  catch(e){setSt($("paramStatus"),e.message,"err");}
+};
+$("btnReloadParams").onclick=loadParams;
+
+/* ---------- projects ---------- */
+async function loadProjects(){
+  const d=await api("/api/projects");
+  currentProj=d.current||"";
+  $("hdrProject").textContent=currentProj?("📖 "+currentProj):"— sin proyecto —";
+  const ul=$("projList");ul.innerHTML="";
+  for(const n of d.projects){
+    const li=document.createElement("li");
+    li.innerHTML=`<span>${esc(n)}</span>`+(n===currentProj?'<span class="meta">activo</span>':'');
+    li.onclick=async()=>{try{await api("/api/projects/select","POST",{name:n});await refreshAll();}catch(e){alert(e.message);}};
+    ul.appendChild(li);
+  }
+  if(currentProj){
+    try{
+      const c=await api("/api/projects/current");
+      const s=c.story||{};
+      $("curProj").innerHTML=`<b>${esc(c.name)}</b><br><span class="hint">${esc(s.title||"")} · ${esc(s.genre||"sin género")} ${s.subgenre?("» "+esc(s.subgenre)):""} · ${esc(s.novel_length||"")} · ${esc(s.structure||"")}</span>`;
+    }catch(e){}
+  } else $("curProj").innerHTML='<span class="hint">Crea o selecciona un proyecto para empezar.</span>';
+}
+$("btnCreateProj").onclick=async()=>{
+  const name=$("newProjName").value.trim();
+  if(!name){setSt($("projStatus"),"Falta el nombre.","err");return;}
+  const story={title:$("newProjTitle").value,genre:$("newProjGenre").value,novel_length:$("newProjLength").value};
+  try{
+    await api("/api/projects","POST",{name,story});
+    setSt($("projStatus"),LANG==="en"?"Created and selected.":"Creado y seleccionado.","ok");
+    await refreshAll(); await loadParams();
+  }catch(e){setSt($("projStatus"),e.message,"err");}
+};
+$("btnDeleteProj").onclick=async()=>{
+  if(!currentProj)return;
+  if(!confirm(`¿Eliminar el proyecto "${currentProj}" y todos sus capítulos?`))return;
+  try{await api("/api/projects/"+encodeURIComponent(currentProj),"DELETE");await refreshAll();}catch(e){alert(e.message);}
+};
+$("btnRefreshProjects").onclick=refreshAll;
+
+/* ---------- API config ---------- */
+async function loadCfg(){
+  const c=await api("/api/config/api");
+  $("cfgBase").value=c.base_url||""; $("cfgModel").value=c.model||"";
+  $("cfgKey").placeholder=c.api_key?c.api_key:"(vacío / oculto)"; $("cfgKey").value="";
+  $("cfgMaxTokens").value=c.max_tokens||32768; $("cfgCtx").value=c.context_budget_tokens||"";
+  $("cfgTimeout").value=c.http_timeout_seconds||600;
+  $("hdrModel").textContent=c.model?("model: "+c.model):"";
+}
+$("btnSaveCfg").onclick=async()=>{
+  const body={base_url:$("cfgBase").value.trim(),model:$("cfgModel").value.trim(),
+    api_key:$("cfgKey").value,max_tokens:+$("cfgMaxTokens").value||0,
+    context_budget_tokens:+$("cfgCtx").value||0,http_timeout_seconds:+$("cfgTimeout").value||600};
+  try{await api("/api/config/api","PUT",body);setSt($("cfgStatus"),LANG==="en"?"Saved.":"Guardado.","ok");$("cfgKey").value="";await loadCfg();}
+  catch(e){setSt($("cfgStatus"),e.message,"err");}
+};
+$("btnTestCfg").onclick=async()=>{
+  setSt($("cfgStatus"),"Probando… (puede tardar unos segundos)","");
+  const body={base_url:$("cfgBase").value.trim(),model:$("cfgModel").value.trim(),api_key:$("cfgKey").value};
+  try{const r=await api("/api/config/api/test","POST",body);
+    setSt($("cfgStatus"),`✔ OK — ${r.model}: "${esc((r.sample||"").slice(0,60))}"`,"ok");}
+  catch(e){setSt($("cfgStatus"),"✘ "+e.message,"err");}
+};
+$("btnModels").onclick=async()=>{
+  $("btnModels").disabled=true;setSt($("cfgStatus"),"Consultando Ollama…","");
+  try{
+    const d=await api("/api/config/api/models?"+new URLSearchParams({base_url:$("cfgBase").value.trim()}));
+    const sel=$("cfgModelList");sel.style.display="block";sel.innerHTML="";
+    if(!d.ollama||(d.models||[]).length===0){
+      setSt($("cfgStatus"),LANG==="en"?"No Ollama models reachable at that URL — type the model manually.":"No hay modelos de Ollama accesibles en esa URL — escribe el modelo a mano.","");
+    }else{
+      for(const m of d.models){const o=document.createElement("option");o.value=o.textContent=m;sel.appendChild(o);}
+      sel.onchange=()=>{$("cfgModel").value=sel.value;};
+      setSt($("cfgStatus"),`${d.models.length} modelos disponibles.`,"ok");
+    }
+  }catch(e){setSt($("cfgStatus"),e.message,"err");}
+  $("btnModels").disabled=false;
+};
+
+/* ---------- outline ---------- */
+async function loadOutline(){
+  if(!currentProj){$("olBody").innerHTML='<span class="hint">Selecciona un proyecto primero.</span>';return;}
+  try{
+    const d=await api("/api/outline");
+    const badge=$("olBadge");
+    if(!d.exists){badge.textContent="—";badge.className="badge";$("olBody").innerHTML='<span class="hint">Sin outline todavía.</span>';$("btnConfirmOutline").style.display="none";$("btnUnconfirmOutline").style.display="none";$("olMeta").textContent="";return;}
+    const o=d.outline;
+    badge.textContent=o.confirmed?(LANG==="en"?"confirmed":"confirmado"):(LANG==="en"?"pending review":"pendiente de confirmar");
+    badge.className="badge "+(o.confirmed?"confirmed":"pending");
+    $("olMeta").textContent=`${o.title||""} — ${o.chapters.length} capítulos${o.generated_at?(" · generado "+o.generated_at.slice(0,10)):""}`;
+    const div=$("olBody");div.innerHTML="";
+    if(o.synopsis){const p=document.createElement("div");p.className="hint";p.style.marginBottom="10px";p.textContent=o.synopsis;div.appendChild(p);}
+    if(o.themes){const p=document.createElement("div");p.className="hint";p.style.marginBottom="10px";p.textContent="Temas: "+o.themes;div.appendChild(p);}
+    for(const ch of o.chapters){
+      const e=document.createElement("div");e.className="outline-ch";
+      e.innerHTML=`<b>${ch.index}. ${esc(ch.title||"")}</b>${ch.section?`<span class="badge">${esc(ch.section)}</span>`:""}<div style="font-size:13px;margin-top:4px">${esc(ch.summary||"")}</div>`+
+        (ch.key_points?`<div class="beats">Key points: ${esc(ch.key_points)}</div>`:"")+
+        (ch.characters?`<div class="beats">Characters: ${esc(ch.characters)}</div>`:"");
+      div.appendChild(e);
+    }
+    $("btnConfirmOutline").style.display=o.confirmed?"none":"";
+    $("btnUnconfirmOutline").style.display=o.confirmed?"":"none";
+  }catch(e){setSt($("olStatus"),e.message,"err");}
+}
+$("btnGenOutline").onclick=async()=>{
+  setSt($("olStatus"),"","");
+  try{await api("/api/outline/generate","POST",{chapter_count:+$("olCount").value||12,idea:$("olIdea").value.trim()});
+    setSt($("olStatus"),LANG==="en"?"Generating… watch the log below.":"Generando… mira el registro abajo.","");}
+  catch(e){setSt($("olStatus"),e.message,"err");}
+};
+$("btnConfirmOutline").onclick=async()=>{try{await api("/api/outline/confirm","POST",{confirm:true});await loadOutline();}catch(e){setSt($("olStatus"),e.message,"err");}};
+$("btnUnconfirmOutline").onclick=async()=>{try{await api("/api/outline/confirm","POST",{confirm:false});await loadOutline();}catch(e){setSt($("olStatus"),e.message,"err");}};
+
+/* ---------- writing ---------- */
+async function loadChapters(){
+  if(!currentProj){$("chapList").innerHTML="";return;}
+  try{
+    const d=await api("/api/chapters");
+    const ol=await api("/api/outline").catch(()=>null);
+    const total=(ol&&ol.exists)?ol.outline.chapters.length:(d.chapters.length||0);
+    const titles={}; if(ol&&ol.exists) for(const c of ol.outline.chapters) titles[c.index]=c.title;
+    const written=new Set(d.chapters.filter(c=>c.exists).map(c=>c.index));
+    const ul=$("chapList");ul.innerHTML="";
+    for(let i=1;i<=Math.max(total,d.chapters.length);i++){
+      const meta=d.chapters.find(c=>c.index===i);
+      const li=document.createElement("li");
+      li.className=i===selChapter?"sel":"";
+      li.innerHTML=`<span>${i}. ${esc(titles[i]||"")}</span><span class="meta">${written.has(i)?((meta&&meta.words||0)+" palabras"):"— vacío —"}</span>`;
+      li.onclick=()=>{selChapter=i;loadChapter();loadChapters();};
+      ul.appendChild(li);
+    }
+  }catch(e){}
+}
+async function loadChapter(){
+  $("chapHeading").textContent=(LANG==="en"?"Chapter ":"Capítulo ")+selChapter;
+  try{
+    const d=await api("/api/chapters/"+selChapter);
+    if(d.exists)$("chText").textContent=d.text;
+    else $("chText").innerHTML='<span class="hint">Aún no escrito — pulsa "Escribir / reescribir".</span>';
+  }catch(e){$("chText").textContent=e.message;}
+}
+$("btnRefreshChaps").onclick=()=>{loadChapters();loadChapter();};
+$("btnWriteChap").onclick=async()=>{
+  try{
+    await api("/api/chapters/write","POST",{chapter:selChapter,feedback:$("chFeedback").value.trim()});
+    $("chText").textContent="";$("chProg").style.display="";$("chProg").value=0;
+  }catch(e){$("chText").textContent=e.message;}
+};
+
+/* ---------- cancel & status ---------- */
+async function cancelTask(){try{await api("/api/task/cancel","POST",{});}catch(e){log({level:"warn",msg:e.message});}}
+$("btnCancelTask1").onclick=cancelTask; $("btnCancelTask2").onclick=cancelTask;
+
+async function refreshStatus(){
+  try{
+    status=await api("/api/status");
+    const running=!!status.task_running;
+    $("stTask").textContent=running?(status.task_name||"sí"):"no";
+    $("stPhase").textContent=status.phase||"—";
+    $("stChaps").textContent=(status.chapters_written||[]).join(", ")||"—";
+    $("btnCancelTask1").style.display=running?"":"none";
+    $("btnCancelTask2").style.display=running?"":"none";
+    ["btnGenOutline","btnWriteChap","btnSaveCfg","btnSaveParams","btnCreateProj"].forEach(id=>{$(id).disabled=running;});
+  }catch(e){}
+}
+
+/* ---------- SSE ---------- */
+function connectSSE(){
+  const es=new EventSource("/api/events");
+  es.addEventListener("log",e=>{try{log(JSON.parse(e.data));}catch(_){}} );
+  es.addEventListener("task_start",()=>{refreshStatus();});
+  es.addEventListener("task_end",e=>{
+    $("chProg").style.display="none";
+    refreshStatus();loadOutline();loadChapters();loadChapter();
+    try{const d=JSON.parse(e.data);if(d.success===false)log({level:"warn",msg_en:"Task ended with errors",msg:"La tarea terminó con errores"});}catch(_){}
+  });
+  es.addEventListener("content_chunk",e=>{
+    try{const d=JSON.parse(e.data);
+      if(d.chapter_idx===selChapter){
+        if($("chText").querySelector(".hint"))$("chText").textContent="";
+        $("chText").textContent+=d.text;
+        $("chText").scrollTop=$("chText").scrollHeight;
+        $("chProg").value=Math.min(1,(($("chProg").value||0)+d.text.length/5000));
+      }
+    }catch(_){}
+  });
+  es.onerror=()=>{/* EventSource reconnects automatically */};
+}
+
+/* ---------- boot ---------- */
+async function refreshAll(){
+  await loadProjects().catch(e=>console.warn(e));
+  await refreshStatus();
+  await loadCfg().catch(e=>console.warn(e));
+}
+(async function boot(){
+  try{
+    const v=await api("/api/version");$("verRow").textContent="Versión: "+v.version;
+    await loadOptions();
+    await refreshAll();
+    connectSSE();
+    setInterval(refreshStatus,4000);
+  }catch(e){document.body.insertAdjacentHTML("afterbegin",`<div style="padding:12px;background:#a33;color:#fff">Error al iniciar: ${esc(e.message)}</div>`);}
+})();
+</script>
+</body>
+</html>
