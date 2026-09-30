@@ -1,0 +1,6 @@
+Referencia local — NO enlazada (se eliminaron las carpetas .git; no son submódulos ni tienen vínculo con GitHub).
+
+1) show-me-the-story — https://github.com/Nigh/show-me-the-story
+   Licencia: MIT (Copyright (c) 2026 xianii). Ver LICENSE en la carpeta.
+2) NovelWriter — https://github.com/EdwardAThomson/NovelWriter
+   Sin archivo LICENSE en el snapshot descargado. Tratar como "todos los derechos reservados" hasta confirmar; usar solo como inspiración, sin copiar código.

@@ -1,0 +1,2635 @@
+{
+ "Sci-Fi": {
+  "Space Opera": {
+   "implied_settings": {
+    "interstellar_travel": true,
+    "advanced_technology": true,
+    "multiple_species": true,
+    "space_combat": true
+   },
+   "protagonist_types": [
+    "Military Officer",
+    "Merchant Captain",
+    "Explorer",
+    "Diplomat",
+    "Rebel Leader",
+    "Imperial Noble"
+   ],
+   "conflict_scales": [
+    "Personal",
+    "Planetary",
+    "Interstellar",
+    "Galactic"
+   ],
+   "tones": [
+    "Optimistic",
+    "Dark",
+    "Political",
+    "Adventure-focused",
+    "Character-driven"
+   ]
+  },
+  "Hard Sci-Fi": {
+   "implied_settings": {
+    "scientific_accuracy": true,
+    "realistic_physics": true,
+    "near_future_tech": true
+   },
+   "protagonist_types": [
+    "Scientist",
+    "Engineer",
+    "Astronaut",
+    "Research Team Leader",
+    "AI Researcher",
+    "Technical Specialist"
+   ],
+   "conflict_scales": [
+    "Personal",
+    "Technical",
+    "Scientific Discovery",
+    "Environmental",
+    "Existential"
+   ],
+   "tones": [
+    "Technical",
+    "Philosophical",
+    "Discovery-focused",
+    "Methodical",
+    "Realistic"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Near Future",
+     "Mid Future",
+     "Present Day"
+    ],
+    "locations": [
+     "Earth",
+     "Low Earth Orbit",
+     "Moon Base",
+     "Mars Colony",
+     "Asteroid Belt"
+    ],
+    "tech_levels": [
+     "Current + 20 Years",
+     "Early Space Colonization",
+     "Advanced Robotics",
+     "Limited AI"
+    ],
+    "sociopolitical_contexts": [
+     "International Cooperation",
+     "Corporate Space Race",
+     "Colony Independence",
+     "Resource Competition"
+    ],
+    "environments": [
+     "Space Stations",
+     "Research Bases",
+     "Planetary Outposts",
+     "Underground Habitats",
+     "Zero Gravity"
+    ]
+   }
+  },
+  "Cyberpunk": {
+   "implied_settings": {
+    "advanced_technology": true,
+    "urban_setting": true,
+    "corporate_dominance": true,
+    "social_inequality": true,
+    "digital_reality": true
+   },
+   "protagonist_types": [
+    "Hacker",
+    "Street Mercenary",
+    "Corporate Defector",
+    "AI Researcher",
+    "Underground Activist",
+    "Augmented Human"
+   ],
+   "conflict_scales": [
+    "Personal",
+    "Street Level",
+    "Corporate",
+    "Systemic",
+    "Digital"
+   ],
+   "tones": [
+    "Noir",
+    "Gritty",
+    "Anti-establishment",
+    "Dystopian",
+    "Tech-noir"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Near Future",
+     "Alternate Present",
+     "Mid Future"
+    ],
+    "locations": [
+     "Mega City",
+     "Corporate Arcology",
+     "Underground Districts",
+     "Virtual Reality",
+     "Digital Networks"
+    ],
+    "tech_levels": [
+     "Advanced Cybernetics",
+     "Neural Networks",
+     "Advanced AI",
+     "Digital Integration",
+     "Biotech Enhancement"
+    ],
+    "sociopolitical_contexts": [
+     "Corporate Oligarchy",
+     "Digital Feudalism",
+     "Underground Economy",
+     "Technocracy",
+     "Social Credit System"
+    ],
+    "environments": [
+     "Urban Sprawl",
+     "Corporate Towers",
+     "Digital Realms",
+     "Underground Markets",
+     "Slum Districts"
+    ]
+   }
+  },
+  "Post-Apocalyptic": {
+   "implied_settings": {
+    "collapsed_civilization": true,
+    "resource_scarcity": true,
+    "hostile_environment": true,
+    "survival_focus": true
+   },
+   "protagonist_types": [
+    "Survivor",
+    "Wasteland Warrior",
+    "Community Leader",
+    "Scavenger",
+    "Medic",
+    "Former Military"
+   ],
+   "conflict_scales": [
+    "Personal Survival",
+    "Group Survival",
+    "Resource Control",
+    "Territory",
+    "Rebuilding Society"
+   ],
+   "tones": [
+    "Grim",
+    "Survival-focused",
+    "Hope in Darkness",
+    "Brutal",
+    "Revolutionary"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Near Future",
+     "Far Future",
+     "Post-Collapse",
+     "Generation After"
+    ],
+    "locations": [
+     "Ruined Cities",
+     "Wasteland",
+     "Underground Bunkers",
+     "Survivor Settlements",
+     "Contaminated Zones"
+    ],
+    "tech_levels": [
+     "Scavenged Technology",
+     "Lost Technology",
+     "Primitive Revival",
+     "Mixed Tech Levels",
+     "Survival Tech"
+    ],
+    "sociopolitical_contexts": [
+     "Tribal Communities",
+     "Warlord Territories",
+     "Democratic Settlements",
+     "Resource Oligarchy",
+     "Survival Communes"
+    ],
+    "environments": [
+     "Urban Ruins",
+     "Toxic Wastelands",
+     "Wilderness Reclaim",
+     "Makeshift Settlements",
+     "Scavenger Territories"
+    ]
+   }
+  },
+  "Time Travel": {
+   "implied_settings": {
+    "temporal_mechanics": true,
+    "paradox_potential": true,
+    "multiple_timelines": true
+   },
+   "protagonist_types": [
+    "Time Agent",
+    "Accidental Traveler",
+    "Historical Researcher",
+    "Timeline Guardian",
+    "Temporal Engineer"
+   ],
+   "conflict_scales": [
+    "Personal",
+    "Historical",
+    "Timeline Preservation",
+    "Paradox Prevention",
+    "Multi-temporal"
+   ],
+   "tones": [
+    "Complex",
+    "Mysterious",
+    "Philosophical",
+    "Adventure",
+    "Causality-focused"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Multiple Eras",
+     "Historical Past",
+     "Near Future",
+     "Far Future",
+     "Alternate Timeline"
+    ],
+    "locations": [
+     "Multiple Time Periods",
+     "Time Travel Facility",
+     "Historical Settings",
+     "Future Cities",
+     "Temporal Nexus"
+    ],
+    "tech_levels": [
+     "Time Travel Tech",
+     "Temporal Manipulation",
+     "Era-Specific Tech",
+     "Advanced Monitoring",
+     "Paradox Prevention"
+    ],
+    "sociopolitical_contexts": [
+     "Timeline Protection",
+     "Historical Preservation",
+     "Temporal Authority",
+     "Multiple Era Politics",
+     "Causality Management"
+    ],
+    "environments": [
+     "Time Stream",
+     "Historical Locations",
+     "Future Settings",
+     "Temporal Facilities",
+     "Paradox Zones"
+    ]
+   }
+  },
+  "Alien Invasion": {
+   "implied_settings": {
+    "hostile_aliens": true,
+    "global_crisis": true,
+    "military_response": true
+   },
+   "protagonist_types": [
+    "Military Leader",
+    "Civilian Survivor",
+    "Scientist",
+    "Resistance Fighter",
+    "Government Official",
+    "First Contact Specialist"
+   ],
+   "conflict_scales": [
+    "Personal",
+    "Local Defense",
+    "Global Resistance",
+    "Species Survival",
+    "Interspecies"
+   ],
+   "tones": [
+    "Tense",
+    "Action-packed",
+    "Horror",
+    "Military",
+    "Survival"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Near Future",
+     "Present Day",
+     "Ongoing Crisis",
+     "Post-Invasion"
+    ],
+    "locations": [
+     "Major Cities",
+     "Military Bases",
+     "Underground Bunkers",
+     "Alien Structures",
+     "Resistance Hideouts"
+    ],
+    "tech_levels": [
+     "Current Military Tech",
+     "Reverse Engineered Alien Tech",
+     "Hybrid Technology",
+     "Advanced Alien Tech",
+     "Defensive Systems"
+    ],
+    "sociopolitical_contexts": [
+     "Global Emergency",
+     "Military Control",
+     "International Coalition",
+     "Resistance Movement",
+     "Post-Invasion Order"
+    ],
+    "environments": [
+     "Occupied Cities",
+     "Battlefields",
+     "Alien Installations",
+     "Safe Zones",
+     "Devastated Areas"
+    ]
+   }
+  },
+  "Biopunk": {
+   "implied_settings": {
+    "genetic_engineering": true,
+    "biotechnology": true,
+    "corporate_control": true,
+    "ethical_dilemmas": true
+   },
+   "protagonist_types": [
+    "Genetic Engineer",
+    "Modified Human",
+    "Underground Scientist",
+    "Corporate Whistleblower",
+    "Bio-hacker",
+    "Test Subject"
+   ],
+   "conflict_scales": [
+    "Personal",
+    "Medical",
+    "Ethical",
+    "Corporate",
+    "Species-wide"
+   ],
+   "tones": [
+    "Body Horror",
+    "Ethical Drama",
+    "Scientific",
+    "Anti-corporate",
+    "Transformative"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Near Future",
+     "Alternate Present",
+     "Mid Future",
+     "Post-Human Era"
+    ],
+    "locations": [
+     "Research Facilities",
+     "Underground Labs",
+     "Biotech Corporations",
+     "Modified Ecosystems",
+     "Quarantine Zones"
+    ],
+    "tech_levels": [
+     "Advanced Biotechnology",
+     "Genetic Manipulation",
+     "Synthetic Biology",
+     "Organic Computing",
+     "Bio-enhancement"
+    ],
+    "sociopolitical_contexts": [
+     "Corporate Bio-control",
+     "Genetic Class System",
+     "Bio-ethics Committees",
+     "Underground Evolution",
+     "Research Regulation"
+    ],
+    "environments": [
+     "Sterile Labs",
+     "Modified Nature",
+     "Organic Architecture",
+     "Contaminated Zones",
+     "Living Cities"
+    ]
+   }
+  }
+ },
+ "Fantasy": {
+  "High Fantasy": {
+   "implied_settings": {
+    "magic_system": true,
+    "medieval_setting": true,
+    "mythical_creatures": true,
+    "epic_scale": true
+   },
+   "protagonist_types": [
+    "Chosen One",
+    "Magic User",
+    "Knight/Warrior",
+    "Royal Heir",
+    "Common Hero",
+    "Prophesied One"
+   ],
+   "conflict_scales": [
+    "Personal Quest",
+    "Kingdom-wide",
+    "World-saving",
+    "Good vs Evil",
+    "Political Intrigue"
+   ],
+   "tones": [
+    "Epic",
+    "Heroic",
+    "Noble",
+    "Mythic",
+    "Adventure"
+   ]
+  },
+  "Dark Fantasy": {
+   "implied_settings": {
+    "grim_world": true,
+    "dangerous_magic": true,
+    "moral_ambiguity": true,
+    "supernatural_threats": true
+   },
+   "protagonist_types": [
+    "Antihero",
+    "Cursed Individual",
+    "Monster Hunter",
+    "Corrupted Noble",
+    "Reluctant Chosen One",
+    "Morally Gray Wizard"
+   ],
+   "conflict_scales": [
+    "Personal Survival",
+    "Moral Choice",
+    "Power Corruption",
+    "Existential Horror",
+    "Societal Decay"
+   ],
+   "tones": [
+    "Grim",
+    "Morally Ambiguous",
+    "Horror-tinged",
+    "Psychological",
+    "Brutal"
+   ]
+  },
+  "Urban Fantasy": {
+   "implied_settings": {
+    "hidden_magic": true,
+    "modern_world": true,
+    "supernatural_society": true,
+    "masquerade": true
+   },
+   "protagonist_types": [
+    "Magical Detective",
+    "Hidden World Guardian",
+    "Modern Witch/Wizard",
+    "Supernatural Creature",
+    "Normal Person Discovered",
+    "Magic Shop Owner"
+   ],
+   "conflict_scales": [
+    "Personal",
+    "City-wide",
+    "Hidden Society",
+    "Supernatural Politics",
+    "World-threatening"
+   ],
+   "tones": [
+    "Modern",
+    "Mysterious",
+    "Action-packed",
+    "Detective Noir",
+    "Secret World"
+   ]
+  },
+  "Sword and Sorcery": {
+   "implied_settings": {
+    "low_magic": true,
+    "dangerous_world": true,
+    "ancient_ruins": true,
+    "barbaric_lands": true
+   },
+   "protagonist_types": [
+    "Warrior",
+    "Rogue",
+    "Barbarian",
+    "Mercenary",
+    "Wandering Wizard",
+    "Treasure Hunter"
+   ],
+   "conflict_scales": [
+    "Personal Gain",
+    "Adventure",
+    "Survival",
+    "Quest",
+    "Local Threat"
+   ],
+   "tones": [
+    "Adventurous",
+    "Gritty",
+    "Action-focused",
+    "Pulp",
+    "Personal"
+   ]
+  },
+  "Mythic Fantasy": {
+   "implied_settings": {
+    "ancient_gods": true,
+    "legendary_creatures": true,
+    "mythological_world": true,
+    "divine_intervention": true
+   },
+   "protagonist_types": [
+    "Demigod",
+    "Legendary Hero",
+    "Oracle",
+    "Divine Champion",
+    "Monster Slayer",
+    "Mythical Creature"
+   ],
+   "conflict_scales": [
+    "Divine Politics",
+    "Legendary Quests",
+    "Fate of Gods",
+    "Mythic Prophecy",
+    "World-shaping"
+   ],
+   "tones": [
+    "Legendary",
+    "Epic",
+    "Mythological",
+    "Divine",
+    "Larger than Life"
+   ]
+  },
+  "Fairy Tale": {
+   "implied_settings": {
+    "enchanted_world": true,
+    "moral_lessons": true,
+    "magical_rules": true,
+    "transformation": true
+   },
+   "protagonist_types": [
+    "Innocent Hero",
+    "Clever Trickster",
+    "Transformed Being",
+    "Royal Figure",
+    "Magical Helper",
+    "Common Person"
+   ],
+   "conflict_scales": [
+    "Personal Journey",
+    "Moral Test",
+    "Magical Challenge",
+    "Kingdom Fate",
+    "Breaking Curses"
+   ],
+   "tones": [
+    "Whimsical",
+    "Moral",
+    "Magical",
+    "Traditional",
+    "Transformative"
+   ]
+  }
+ },
+ "Horror": {
+  "Gothic Horror": {
+   "implied_settings": {
+    "atmospheric_dread": true,
+    "isolated_setting": true,
+    "supernatural_elements": true,
+    "psychological_terror": true,
+    "dark_atmosphere": true
+   },
+   "protagonist_types": [
+    "Haunted Individual",
+    "Investigator",
+    "Innocent Victim",
+    "Cursed Person",
+    "Gothic Hero",
+    "Tormented Soul"
+   ],
+   "conflict_scales": [
+    "Personal Haunting",
+    "Family Curse",
+    "Supernatural Threat",
+    "Psychological Terror",
+    "Ancient Evil"
+   ],
+   "tones": [
+    "Atmospheric",
+    "Psychological",
+    "Brooding",
+    "Mysterious",
+    "Melancholic"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Victorian Era",
+     "Historical Period",
+     "Timeless Gothic",
+     "Dark Past"
+    ],
+    "locations": [
+     "Gothic Mansions",
+     "Ancient Castles",
+     "Abandoned Estates",
+     "Dark Cathedrals",
+     "Isolated Manors"
+    ],
+    "environments": [
+     "Shadowy Halls",
+     "Crumbling Architecture",
+     "Misty Landscapes",
+     "Dark Libraries",
+     "Haunted Chambers"
+    ]
+   }
+  },
+  "Cosmic Horror": {
+   "implied_settings": {
+    "unknowable_entities": true,
+    "existential_dread": true,
+    "cosmic_scale": true,
+    "sanity_loss": true,
+    "ancient_powers": true
+   },
+   "protagonist_types": [
+    "Academic Researcher",
+    "Occult Investigator",
+    "Unwitting Scholar",
+    "Cosmic Witness",
+    "Doomed Explorer",
+    "Sanity-threatened Individual"
+   ],
+   "conflict_scales": [
+    "Cosmic Revelation",
+    "Sanity Destruction",
+    "Reality Breakdown",
+    "Ancient Awakening",
+    "Existential Horror"
+   ],
+   "tones": [
+    "Existential",
+    "Unknowable",
+    "Cosmic",
+    "Dread-filled",
+    "Mind-breaking"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "1920s-1930s",
+     "Academic Period",
+     "Research Era",
+     "Discovery Time"
+    ],
+    "locations": [
+     "Ancient Sites",
+     "Research Facilities",
+     "Forbidden Libraries",
+     "Remote Locations",
+     "Cosmic Portals"
+    ],
+    "environments": [
+     "Eldritch Landscapes",
+     "Academic Settings",
+     "Forbidden Places",
+     "Otherworldly Realms",
+     "Sanity-breaking Vistas"
+    ]
+   }
+  },
+  "Psychological Horror": {
+   "implied_settings": {
+    "mental_terror": true,
+    "reality_questioning": true,
+    "internal_conflict": true,
+    "paranoia": true,
+    "mind_games": true
+   },
+   "protagonist_types": [
+    "Unreliable Narrator",
+    "Mentally Unstable",
+    "Paranoid Individual",
+    "Trauma Victim",
+    "Isolated Person",
+    "Psychologically Fragile"
+   ],
+   "conflict_scales": [
+    "Mental Breakdown",
+    "Reality Distortion",
+    "Psychological Manipulation",
+    "Internal Terror",
+    "Sanity Loss"
+   ],
+   "tones": [
+    "Psychological",
+    "Disturbing",
+    "Mind-bending",
+    "Paranoid",
+    "Introspective"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Contemporary",
+     "Modern Day",
+     "Present Era",
+     "Current Times"
+    ],
+    "locations": [
+     "Mental Institutions",
+     "Isolated Homes",
+     "Urban Settings",
+     "Therapy Offices",
+     "Confined Spaces"
+    ],
+    "environments": [
+     "Claustrophobic Spaces",
+     "Clinical Settings",
+     "Isolated Locations",
+     "Mind-bending Realities",
+     "Psychological Landscapes"
+    ]
+   }
+  },
+  "Body Horror": {
+   "implied_settings": {
+    "physical_transformation": true,
+    "biological_horror": true,
+    "medical_terror": true,
+    "body_violation": true,
+    "visceral_fear": true
+   },
+   "protagonist_types": [
+    "Medical Patient",
+    "Scientist",
+    "Transformation Victim",
+    "Medical Professional",
+    "Experimental Subject",
+    "Infected Individual"
+   ],
+   "conflict_scales": [
+    "Physical Transformation",
+    "Medical Horror",
+    "Biological Threat",
+    "Body Violation",
+    "Genetic Terror"
+   ],
+   "tones": [
+    "Visceral",
+    "Medical",
+    "Disturbing",
+    "Biological",
+    "Transformative"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Contemporary",
+     "Near Future",
+     "Medical Era",
+     "Scientific Period"
+    ],
+    "locations": [
+     "Medical Facilities",
+     "Research Labs",
+     "Hospitals",
+     "Experimental Sites",
+     "Biological Centers"
+    ],
+    "environments": [
+     "Sterile Labs",
+     "Medical Rooms",
+     "Research Facilities",
+     "Biological Chambers",
+     "Transformation Spaces"
+    ]
+   }
+  },
+  "Slasher Horror": {
+   "implied_settings": {
+    "killer_stalking": true,
+    "survival_horror": true,
+    "violent_deaths": true,
+    "final_girl": true,
+    "masked_killer": true
+   },
+   "protagonist_types": [
+    "Final Girl",
+    "Survivor",
+    "Potential Victim",
+    "Group Member",
+    "Innocent Target",
+    "Resourceful Fighter"
+   ],
+   "conflict_scales": [
+    "Survival",
+    "Killer Hunt",
+    "Group Elimination",
+    "Escape Attempt",
+    "Final Confrontation"
+   ],
+   "tones": [
+    "Suspenseful",
+    "Violent",
+    "Survival-focused",
+    "Intense",
+    "Action-horror"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Contemporary",
+     "1980s-1990s",
+     "Modern Day",
+     "Present Era"
+    ],
+    "locations": [
+     "Isolated Cabins",
+     "Summer Camps",
+     "Suburban Areas",
+     "Remote Locations",
+     "Confined Spaces"
+    ],
+    "environments": [
+     "Dark Woods",
+     "Isolated Buildings",
+     "Suburban Homes",
+     "Remote Facilities",
+     "Escape Routes"
+    ]
+   }
+  },
+  "Supernatural Horror": {
+   "implied_settings": {
+    "ghostly_presence": true,
+    "paranormal_activity": true,
+    "spiritual_terror": true,
+    "otherworldly_beings": true,
+    "haunted_locations": true
+   },
+   "protagonist_types": [
+    "Paranormal Investigator",
+    "Haunted Individual",
+    "Psychic Medium",
+    "Skeptical Researcher",
+    "Spiritual Warrior",
+    "Innocent Victim"
+   ],
+   "conflict_scales": [
+    "Ghostly Haunting",
+    "Demonic Possession",
+    "Spiritual Warfare",
+    "Paranormal Investigation",
+    "Supernatural Threat"
+   ],
+   "tones": [
+    "Supernatural",
+    "Eerie",
+    "Spiritual",
+    "Otherworldly",
+    "Paranormal"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Any Era",
+     "Contemporary",
+     "Historical",
+     "Timeless"
+    ],
+    "locations": [
+     "Haunted Houses",
+     "Ancient Burial Grounds",
+     "Spiritual Sites",
+     "Cursed Locations",
+     "Paranormal Hotspots"
+    ],
+    "environments": [
+     "Ghostly Manifestations",
+     "Spiritual Realms",
+     "Haunted Spaces",
+     "Paranormal Zones",
+     "Otherworldly Places"
+    ]
+   }
+  }
+ },
+ "Mystery": {
+  "Cozy Mystery": {
+   "implied_settings": {
+    "small_community": true,
+    "amateur_detective": true,
+    "low_violence": true,
+    "puzzle_focus": true,
+    "recurring_characters": true
+   },
+   "protagonist_types": [
+    "Amateur Detective",
+    "Librarian",
+    "Shop Owner",
+    "Retired Professional",
+    "Local Resident",
+    "Hobby Enthusiast"
+   ],
+   "conflict_scales": [
+    "Personal Mystery",
+    "Community Secret",
+    "Local Crime",
+    "Family Mystery",
+    "Historical Puzzle"
+   ],
+   "tones": [
+    "Gentle",
+    "Puzzle-focused",
+    "Community-centered",
+    "Cozy",
+    "Character-driven"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Contemporary",
+     "Small Town Present",
+     "Rural Setting",
+     "Close-knit Community"
+    ],
+    "locations": [
+     "Small Towns",
+     "Villages",
+     "Bookshops",
+     "Tea Rooms",
+     "Local Libraries"
+    ],
+    "environments": [
+     "Cozy Shops",
+     "Community Centers",
+     "Local Cafes",
+     "Residential Areas",
+     "Peaceful Settings"
+    ]
+   }
+  },
+  "Police Procedural": {
+   "implied_settings": {
+    "law_enforcement": true,
+    "realistic_investigation": true,
+    "team_work": true,
+    "forensic_science": true,
+    "bureaucracy": true
+   },
+   "protagonist_types": [
+    "Police Detective",
+    "Forensic Specialist",
+    "Police Captain",
+    "Crime Scene Investigator",
+    "Police Sergeant",
+    "FBI Agent"
+   ],
+   "conflict_scales": [
+    "Individual Cases",
+    "Serial Crimes",
+    "Organized Crime",
+    "Corruption",
+    "Major Investigations"
+   ],
+   "tones": [
+    "Realistic",
+    "Procedural",
+    "Professional",
+    "Methodical",
+    "Team-focused"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Contemporary",
+     "Modern Day",
+     "Urban Present",
+     "Current Era"
+    ],
+    "locations": [
+     "Police Stations",
+     "Crime Scenes",
+     "Forensic Labs",
+     "Courtrooms",
+     "Urban Areas"
+    ],
+    "environments": [
+     "Police Departments",
+     "Investigation Rooms",
+     "Crime Labs",
+     "City Streets",
+     "Official Buildings"
+    ]
+   }
+  },
+  "Hard-boiled": {
+   "implied_settings": {
+    "noir_atmosphere": true,
+    "cynical_world": true,
+    "urban_setting": true,
+    "moral_ambiguity": true,
+    "tough_protagonist": true
+   },
+   "protagonist_types": [
+    "Private Detective",
+    "Ex-Cop",
+    "Cynical Investigator",
+    "Tough Guy",
+    "Street-smart Detective",
+    "Noir Hero"
+   ],
+   "conflict_scales": [
+    "Personal Cases",
+    "Corruption",
+    "Urban Crime",
+    "Moral Choices",
+    "Survival"
+   ],
+   "tones": [
+    "Noir",
+    "Cynical",
+    "Gritty",
+    "Dark",
+    "Atmospheric"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "1940s-1950s",
+     "Classic Noir Era",
+     "Urban Past",
+     "Post-War Period"
+    ],
+    "locations": [
+     "Dark Cities",
+     "Seedy Bars",
+     "Rain-soaked Streets",
+     "Smoky Offices",
+     "Urban Underworld"
+    ],
+    "environments": [
+     "Noir Cityscapes",
+     "Shadowy Alleys",
+     "Detective Offices",
+     "Nightclubs",
+     "Hotel Rooms"
+    ]
+   }
+  },
+  "Amateur Detective": {
+   "implied_settings": {
+    "civilian_investigator": true,
+    "personal_involvement": true,
+    "puzzle_solving": true,
+    "accidental_detective": true,
+    "community_connections": true
+   },
+   "protagonist_types": [
+    "Curious Civilian",
+    "Journalist",
+    "Academic",
+    "Professional",
+    "Retiree",
+    "Local Expert"
+   ],
+   "conflict_scales": [
+    "Personal Mystery",
+    "Local Crime",
+    "Family Secrets",
+    "Community Issues",
+    "Historical Mysteries"
+   ],
+   "tones": [
+    "Investigative",
+    "Personal",
+    "Puzzle-focused",
+    "Character-driven",
+    "Discovery-oriented"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Contemporary",
+     "Modern Day",
+     "Any Era",
+     "Present Setting"
+    ],
+    "locations": [
+     "Various Communities",
+     "Professional Settings",
+     "Academic Institutions",
+     "Local Areas",
+     "Familiar Places"
+    ],
+    "environments": [
+     "Everyday Locations",
+     "Professional Offices",
+     "Community Spaces",
+     "Residential Areas",
+     "Public Places"
+    ]
+   }
+  },
+  "Historical Mystery": {
+   "implied_settings": {
+    "period_setting": true,
+    "historical_accuracy": true,
+    "period_investigation": true,
+    "cultural_context": true,
+    "authentic_details": true
+   },
+   "protagonist_types": [
+    "Period Detective",
+    "Historical Figure",
+    "Scholar",
+    "Period Professional",
+    "Aristocrat",
+    "Common Person"
+   ],
+   "conflict_scales": [
+    "Personal Mysteries",
+    "Historical Events",
+    "Period Crimes",
+    "Social Issues",
+    "Political Intrigue"
+   ],
+   "tones": [
+    "Historical",
+    "Authentic",
+    "Period-appropriate",
+    "Cultural",
+    "Educational"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Victorian Era",
+     "Medieval Period",
+     "Ancient Times",
+     "Renaissance",
+     "Any Historical Period"
+    ],
+    "locations": [
+     "Historical Cities",
+     "Period Buildings",
+     "Ancient Sites",
+     "Historical Landmarks",
+     "Period-appropriate Places"
+    ],
+    "environments": [
+     "Period Architecture",
+     "Historical Settings",
+     "Authentic Locations",
+     "Cultural Sites",
+     "Time-specific Places"
+    ]
+   }
+  },
+  "Psychological Mystery": {
+   "implied_settings": {
+    "mental_puzzles": true,
+    "character_psychology": true,
+    "unreliable_narrators": true,
+    "mind_games": true,
+    "internal_conflict": true
+   },
+   "protagonist_types": [
+    "Psychologist",
+    "Troubled Detective",
+    "Mental Health Professional",
+    "Unreliable Narrator",
+    "Complex Character",
+    "Psychological Profiler"
+   ],
+   "conflict_scales": [
+    "Mental Mysteries",
+    "Psychological Crimes",
+    "Identity Issues",
+    "Memory Problems",
+    "Perception Puzzles"
+   ],
+   "tones": [
+    "Psychological",
+    "Introspective",
+    "Mind-bending",
+    "Complex",
+    "Character-focused"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Contemporary",
+     "Modern Psychology Era",
+     "Present Day",
+     "Current Times"
+    ],
+    "locations": [
+     "Mental Health Facilities",
+     "Psychology Offices",
+     "Hospitals",
+     "Research Centers",
+     "Therapeutic Settings"
+    ],
+    "environments": [
+     "Clinical Settings",
+     "Therapeutic Spaces",
+     "Medical Facilities",
+     "Research Labs",
+     "Professional Offices"
+    ]
+   }
+  }
+ },
+ "Romance": {
+  "Contemporary Romance": {
+   "implied_settings": {
+    "modern_setting": true,
+    "relationship_focus": true,
+    "emotional_journey": true,
+    "happy_ending": true,
+    "realistic_world": true
+   },
+   "protagonist_types": [
+    "Career Professional",
+    "Single Parent",
+    "Artist/Creative",
+    "Business Owner",
+    "Healthcare Worker",
+    "Teacher/Academic"
+   ],
+   "conflict_scales": [
+    "Personal Growth",
+    "Relationship Obstacles",
+    "Career vs Love",
+    "Family Issues",
+    "Past Trauma"
+   ],
+   "tones": [
+    "Optimistic",
+    "Emotional",
+    "Realistic",
+    "Heartwarming",
+    "Character-driven"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Present Day",
+     "Modern Era",
+     "Contemporary Times",
+     "Current Year"
+    ],
+    "locations": [
+     "Modern Cities",
+     "Suburban Areas",
+     "Workplaces",
+     "Coffee Shops",
+     "Apartments"
+    ],
+    "environments": [
+     "Urban Settings",
+     "Professional Offices",
+     "Restaurants",
+     "Homes",
+     "Social Venues"
+    ]
+   }
+  },
+  "Historical Romance": {
+   "implied_settings": {
+    "period_setting": true,
+    "historical_accuracy": true,
+    "period_constraints": true,
+    "social_conventions": true,
+    "authentic_details": true
+   },
+   "protagonist_types": [
+    "Aristocrat",
+    "Commoner",
+    "Merchant",
+    "Governess",
+    "Military Officer",
+    "Independent Woman"
+   ],
+   "conflict_scales": [
+    "Social Class Differences",
+    "Family Expectations",
+    "Historical Events",
+    "Social Conventions",
+    "Personal Freedom"
+   ],
+   "tones": [
+    "Romantic",
+    "Historical",
+    "Elegant",
+    "Passionate",
+    "Period-appropriate"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Regency Era",
+     "Victorian Period",
+     "Medieval Times",
+     "Renaissance",
+     "Any Historical Period"
+    ],
+    "locations": [
+     "Grand Estates",
+     "Ballrooms",
+     "Historical Cities",
+     "Countryside",
+     "Period Buildings"
+    ],
+    "environments": [
+     "Elegant Mansions",
+     "Period Architecture",
+     "Historical Settings",
+     "Formal Gardens",
+     "Cultural Sites"
+    ]
+   }
+  },
+  "Paranormal Romance": {
+   "implied_settings": {
+    "supernatural_elements": true,
+    "otherworldly_beings": true,
+    "magic_or_powers": true,
+    "hidden_world": true,
+    "fantasy_romance": true
+   },
+   "protagonist_types": [
+    "Supernatural Being",
+    "Human with Powers",
+    "Vampire/Werewolf",
+    "Witch/Wizard",
+    "Angel/Demon",
+    "Psychic/Medium"
+   ],
+   "conflict_scales": [
+    "Supernatural Threats",
+    "Species Differences",
+    "Magical Conflicts",
+    "Hidden World Politics",
+    "Power Struggles"
+   ],
+   "tones": [
+    "Supernatural",
+    "Passionate",
+    "Mysterious",
+    "Dark Romance",
+    "Fantasy-driven"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Contemporary",
+     "Urban Fantasy",
+     "Alternate Reality",
+     "Timeless"
+    ],
+    "locations": [
+     "Hidden Realms",
+     "Supernatural Cities",
+     "Magical Places",
+     "Otherworldly Locations",
+     "Mystical Settings"
+    ],
+    "environments": [
+     "Supernatural Venues",
+     "Magical Landscapes",
+     "Hidden Sanctuaries",
+     "Otherworldly Realms",
+     "Mystical Locations"
+    ]
+   }
+  },
+  "Romantic Suspense": {
+   "implied_settings": {
+    "danger_element": true,
+    "mystery_plot": true,
+    "thriller_aspects": true,
+    "protective_hero": true,
+    "high_stakes": true
+   },
+   "protagonist_types": [
+    "Law Enforcement",
+    "Security Expert",
+    "Investigator",
+    "Witness",
+    "Target",
+    "Protector"
+   ],
+   "conflict_scales": [
+    "Personal Danger",
+    "Criminal Threats",
+    "Mystery Solving",
+    "Protection Needs",
+    "Trust Issues"
+   ],
+   "tones": [
+    "Suspenseful",
+    "Intense",
+    "Protective",
+    "Thrilling",
+    "High-stakes"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Contemporary",
+     "Modern Day",
+     "Present Era",
+     "Current Times"
+    ],
+    "locations": [
+     "Safe Houses",
+     "Police Stations",
+     "Secure Locations",
+     "Urban Areas",
+     "Hidden Places"
+    ],
+    "environments": [
+     "Secure Facilities",
+     "Investigation Sites",
+     "Protected Areas",
+     "Law Enforcement",
+     "Safe Zones"
+    ]
+   }
+  },
+  "Small Town Romance": {
+   "implied_settings": {
+    "rural_setting": true,
+    "close_community": true,
+    "simple_life": true,
+    "family_values": true,
+    "hometown_charm": true
+   },
+   "protagonist_types": [
+    "Local Business Owner",
+    "Hometown Hero",
+    "City Person Returns",
+    "Small Town Doctor",
+    "Teacher",
+    "Farmer/Rancher"
+   ],
+   "conflict_scales": [
+    "Community Issues",
+    "Family Expectations",
+    "City vs Country",
+    "Local Problems",
+    "Personal Growth"
+   ],
+   "tones": [
+    "Wholesome",
+    "Community-focused",
+    "Heartwarming",
+    "Family-oriented",
+    "Cozy"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Contemporary",
+     "Present Day",
+     "Modern Rural",
+     "Current Era"
+    ],
+    "locations": [
+     "Small Towns",
+     "Rural Communities",
+     "Family Farms",
+     "Local Businesses",
+     "Community Centers"
+    ],
+    "environments": [
+     "Main Street",
+     "Local Cafes",
+     "Community Events",
+     "Rural Landscapes",
+     "Family Homes"
+    ]
+   }
+  },
+  "Erotic Romance": {
+   "implied_settings": {
+    "adult_content": true,
+    "sexual_tension": true,
+    "intimate_focus": true,
+    "mature_themes": true,
+    "passionate_relationship": true
+   },
+   "protagonist_types": [
+    "Experienced Lover",
+    "Dominant Partner",
+    "Submissive Partner",
+    "Sexual Explorer",
+    "Mature Adult",
+    "Confident Character"
+   ],
+   "conflict_scales": [
+    "Sexual Tension",
+    "Intimate Conflicts",
+    "Relationship Dynamics",
+    "Personal Boundaries",
+    "Emotional Intimacy"
+   ],
+   "tones": [
+    "Passionate",
+    "Sensual",
+    "Intense",
+    "Adult",
+    "Intimate"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Contemporary",
+     "Any Era",
+     "Modern Times",
+     "Adult Setting"
+    ],
+    "locations": [
+     "Private Spaces",
+     "Intimate Settings",
+     "Luxury Locations",
+     "Exclusive Venues",
+     "Personal Homes"
+    ],
+    "environments": [
+     "Intimate Spaces",
+     "Luxury Settings",
+     "Private Venues",
+     "Romantic Locations",
+     "Exclusive Places"
+    ]
+   }
+  }
+ },
+ "Thriller": {
+  "Espionage Thriller": {
+   "implied_settings": {
+    "international_intrigue": true,
+    "spy_networks": true,
+    "government_secrets": true,
+    "double_agents": true,
+    "global_stakes": true
+   },
+   "protagonist_types": [
+    "Secret Agent",
+    "Intelligence Officer",
+    "Double Agent",
+    "Spy Handler",
+    "Undercover Operative",
+    "Government Analyst"
+   ],
+   "conflict_scales": [
+    "International Conspiracy",
+    "Government Secrets",
+    "Spy Networks",
+    "National Security",
+    "Global Politics"
+   ],
+   "tones": [
+    "Sophisticated",
+    "International",
+    "High-stakes",
+    "Political",
+    "Covert"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Cold War Era",
+     "Contemporary",
+     "Modern Espionage",
+     "International Present"
+    ],
+    "locations": [
+     "International Cities",
+     "Embassy Buildings",
+     "Safe Houses",
+     "Government Facilities",
+     "Foreign Countries"
+    ],
+    "environments": [
+     "Diplomatic Settings",
+     "Covert Locations",
+     "International Venues",
+     "Secure Facilities",
+     "Global Hotspots"
+    ]
+   }
+  },
+  "Techno-Thriller": {
+   "implied_settings": {
+    "advanced_technology": true,
+    "cyber_warfare": true,
+    "scientific_threats": true,
+    "high_tech_weapons": true,
+    "digital_espionage": true
+   },
+   "protagonist_types": [
+    "Computer Expert",
+    "Cyber Security Specialist",
+    "Tech Entrepreneur",
+    "Hacker",
+    "Scientist",
+    "Digital Investigator"
+   ],
+   "conflict_scales": [
+    "Cyber Attacks",
+    "Technological Threats",
+    "Digital Warfare",
+    "Scientific Disasters",
+    "Tech Conspiracies"
+   ],
+   "tones": [
+    "High-tech",
+    "Fast-paced",
+    "Technical",
+    "Futuristic",
+    "Digital"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Near Future",
+     "Contemporary",
+     "Digital Age",
+     "Tech Present"
+    ],
+    "locations": [
+     "Tech Companies",
+     "Data Centers",
+     "Research Labs",
+     "Cyber Command Centers",
+     "Digital Networks"
+    ],
+    "environments": [
+     "High-tech Facilities",
+     "Computer Labs",
+     "Digital Realms",
+     "Tech Offices",
+     "Cyber Spaces"
+    ]
+   }
+  },
+  "Political Thriller": {
+   "implied_settings": {
+    "government_corruption": true,
+    "political_intrigue": true,
+    "power_struggles": true,
+    "conspiracy": true,
+    "institutional_conflict": true
+   },
+   "protagonist_types": [
+    "Politician",
+    "Journalist",
+    "Government Insider",
+    "Whistleblower",
+    "Political Aide",
+    "Investigative Reporter"
+   ],
+   "conflict_scales": [
+    "Political Corruption",
+    "Government Conspiracy",
+    "Electoral Manipulation",
+    "Institutional Cover-up",
+    "Power Abuse"
+   ],
+   "tones": [
+    "Political",
+    "Investigative",
+    "Institutional",
+    "Conspiratorial",
+    "Power-focused"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Contemporary",
+     "Election Periods",
+     "Political Crisis",
+     "Modern Politics"
+    ],
+    "locations": [
+     "Government Buildings",
+     "Political Offices",
+     "News Rooms",
+     "Capitol Buildings",
+     "Campaign Headquarters"
+    ],
+    "environments": [
+     "Political Venues",
+     "Government Halls",
+     "Media Centers",
+     "Official Buildings",
+     "Power Centers"
+    ]
+   }
+  },
+  "Action Thriller": {
+   "implied_settings": {
+    "high_action": true,
+    "physical_danger": true,
+    "chase_sequences": true,
+    "combat_scenes": true,
+    "adrenaline_rush": true
+   },
+   "protagonist_types": [
+    "Action Hero",
+    "Special Forces",
+    "Mercenary",
+    "Bodyguard",
+    "Stunt Performer",
+    "Martial Artist"
+   ],
+   "conflict_scales": [
+    "Physical Confrontation",
+    "High-speed Chases",
+    "Combat Situations",
+    "Rescue Missions",
+    "Survival Scenarios"
+   ],
+   "tones": [
+    "High-energy",
+    "Action-packed",
+    "Adrenaline-fueled",
+    "Physical",
+    "Fast-paced"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Contemporary",
+     "Modern Day",
+     "Action Present",
+     "Current Era"
+    ],
+    "locations": [
+     "Urban Environments",
+     "Industrial Sites",
+     "Transportation Hubs",
+     "Action Venues",
+     "Combat Zones"
+    ],
+    "environments": [
+     "High-action Settings",
+     "Chase Locations",
+     "Combat Arenas",
+     "Dangerous Terrain",
+     "Action Sequences"
+    ]
+   }
+  },
+  "Psychological Thriller": {
+   "implied_settings": {
+    "mental_manipulation": true,
+    "psychological_warfare": true,
+    "mind_games": true,
+    "paranoia": true,
+    "reality_distortion": true
+   },
+   "protagonist_types": [
+    "Psychologist",
+    "Mentally Unstable",
+    "Manipulation Victim",
+    "Paranoid Individual",
+    "Mind Game Player",
+    "Psychological Profiler"
+   ],
+   "conflict_scales": [
+    "Mental Manipulation",
+    "Psychological Torture",
+    "Mind Control",
+    "Paranoid Delusions",
+    "Reality Breakdown"
+   ],
+   "tones": [
+    "Psychological",
+    "Mind-bending",
+    "Paranoid",
+    "Manipulative",
+    "Disturbing"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Contemporary",
+     "Modern Day",
+     "Present Era",
+     "Current Times"
+    ],
+    "locations": [
+     "Psychological Facilities",
+     "Isolated Locations",
+     "Mental Institutions",
+     "Private Homes",
+     "Therapy Offices"
+    ],
+    "environments": [
+     "Psychological Spaces",
+     "Mind-bending Realities",
+     "Manipulative Settings",
+     "Paranoid Environments",
+     "Mental Landscapes"
+    ]
+   }
+  },
+  "Legal Thriller": {
+   "implied_settings": {
+    "courtroom_drama": true,
+    "legal_conspiracy": true,
+    "justice_system": true,
+    "legal_corruption": true,
+    "law_enforcement": true
+   },
+   "protagonist_types": [
+    "Lawyer",
+    "Judge",
+    "Legal Investigator",
+    "Prosecutor",
+    "Defense Attorney",
+    "Legal Whistleblower"
+   ],
+   "conflict_scales": [
+    "Legal Conspiracy",
+    "Courtroom Drama",
+    "Justice Corruption",
+    "Legal Cover-up",
+    "Judicial Manipulation"
+   ],
+   "tones": [
+    "Legal",
+    "Procedural",
+    "Justice-focused",
+    "Institutional",
+    "Courtroom-driven"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Contemporary",
+     "Modern Legal Era",
+     "Present Day",
+     "Current Justice System"
+    ],
+    "locations": [
+     "Courtrooms",
+     "Law Offices",
+     "Legal Buildings",
+     "Judge Chambers",
+     "Legal Institutions"
+    ],
+    "environments": [
+     "Legal Settings",
+     "Courtroom Venues",
+     "Law Offices",
+     "Justice Buildings",
+     "Legal Facilities"
+    ]
+   }
+  }
+ },
+ "Western": {
+  "Classic Western": {
+   "implied_settings": {
+    "frontier_setting": true,
+    "lawlessness": true,
+    "honor_code": true,
+    "survival_focus": true,
+    "horse_culture": true
+   },
+   "protagonist_types": [
+    "Sheriff/Marshal",
+    "Gunslinger",
+    "Rancher",
+    "Outlaw",
+    "Bounty Hunter",
+    "Frontier Doctor"
+   ],
+   "conflict_scales": [
+    "Personal Vendetta",
+    "Town Protection",
+    "Range War",
+    "Law vs Lawlessness",
+    "Civilization vs Wilderness"
+   ],
+   "tones": [
+    "Heroic",
+    "Moral",
+    "Action-packed",
+    "Traditional",
+    "Justice-focused"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "1860s-1890s",
+     "Post-Civil War",
+     "Gold Rush Era",
+     "Railroad Expansion"
+    ],
+    "locations": [
+     "Frontier Towns",
+     "Cattle Ranches",
+     "Mining Camps",
+     "Desert Badlands",
+     "Railroad Stations"
+    ],
+    "environments": [
+     "Open Range",
+     "Dusty Streets",
+     "Saloons",
+     "Jailhouses",
+     "Trading Posts"
+    ]
+   }
+  },
+  "Spaghetti Western": {
+   "implied_settings": {
+    "moral_ambiguity": true,
+    "violence": true,
+    "anti_hero": true,
+    "stylized_action": true,
+    "cynical_world": true
+   },
+   "protagonist_types": [
+    "Man with No Name",
+    "Bounty Hunter",
+    "Revenge Seeker",
+    "Mysterious Stranger",
+    "Morally Gray Gunslinger",
+    "Cynical Drifter"
+   ],
+   "conflict_scales": [
+    "Personal Revenge",
+    "Money/Greed",
+    "Survival",
+    "Power Struggle",
+    "Moral Corruption"
+   ],
+   "tones": [
+    "Gritty",
+    "Cynical",
+    "Stylized",
+    "Morally Ambiguous",
+    "Violent"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Mexican Revolution",
+     "Post-Civil War",
+     "Border Conflicts",
+     "Lawless Territories"
+    ],
+    "locations": [
+     "Border Towns",
+     "Mexican Villages",
+     "Desert Landscapes",
+     "Abandoned Missions",
+     "Outlaw Hideouts"
+    ],
+    "environments": [
+     "Harsh Deserts",
+     "Dusty Plazas",
+     "Cantinas",
+     "Ghost Towns",
+     "Rocky Canyons"
+    ]
+   }
+  },
+  "Weird Western": {
+   "implied_settings": {
+    "supernatural_elements": true,
+    "horror_aspects": true,
+    "occult_mysteries": true,
+    "steampunk_tech": true,
+    "alternate_history": true
+   },
+   "protagonist_types": [
+    "Occult Detective",
+    "Monster Hunter",
+    "Mad Scientist",
+    "Cursed Gunslinger",
+    "Native Shaman",
+    "Steampunk Inventor"
+   ],
+   "conflict_scales": [
+    "Supernatural Threats",
+    "Occult Conspiracies",
+    "Monster Invasions",
+    "Technological Horror",
+    "Mystical Prophecies"
+   ],
+   "tones": [
+    "Horror-tinged",
+    "Mysterious",
+    "Supernatural",
+    "Gothic",
+    "Steampunk"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Alternate 1800s",
+     "Supernatural Wild West",
+     "Steampunk Frontier",
+     "Post-Apocalyptic West"
+    ],
+    "locations": [
+     "Haunted Towns",
+     "Ancient Burial Grounds",
+     "Mad Scientist Labs",
+     "Cursed Mines",
+     "Mystical Territories"
+    ],
+    "environments": [
+     "Supernatural Landscapes",
+     "Steampunk Settlements",
+     "Haunted Saloons",
+     "Occult Libraries",
+     "Monster Lairs"
+    ]
+   }
+  },
+  "Space Western": {
+   "implied_settings": {
+    "frontier_in_space": true,
+    "advanced_technology": true,
+    "lawless_territories": true,
+    "resource_conflicts": true,
+    "colonial_expansion": true
+   },
+   "protagonist_types": [
+    "Space Marshal",
+    "Smuggler",
+    "Colonial Sheriff",
+    "Asteroid Miner",
+    "Bounty Hunter",
+    "Frontier Pilot"
+   ],
+   "conflict_scales": [
+    "Personal Survival",
+    "Colony Protection",
+    "Corporate Wars",
+    "Interplanetary Conflicts",
+    "Frontier Justice"
+   ],
+   "tones": [
+    "Adventure",
+    "Frontier Spirit",
+    "High-tech",
+    "Exploration",
+    "Independence"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Space Colonization",
+     "Frontier Expansion",
+     "Corporate Space Race",
+     "Terraforming Era"
+    ],
+    "locations": [
+     "Space Stations",
+     "Frontier Colonies",
+     "Asteroid Belts",
+     "Terraformed Worlds",
+     "Trading Posts"
+    ],
+    "environments": [
+     "Space Saloons",
+     "Mining Facilities",
+     "Spaceports",
+     "Colonial Towns",
+     "Starship Interiors"
+    ]
+   }
+  },
+  "Traditional Western": {
+   "implied_settings": {
+    "frontier_setting": true,
+    "lawlessness": true,
+    "honor_code": true,
+    "survival_focus": true,
+    "horse_culture": true,
+    "moral_clarity": true
+   },
+   "protagonist_types": [
+    "Sheriff/Marshal",
+    "Cowboy",
+    "Rancher",
+    "Homesteader",
+    "Frontier Doctor",
+    "Schoolteacher"
+   ],
+   "conflict_scales": [
+    "Personal Honor",
+    "Town Protection",
+    "Range War",
+    "Law vs Lawlessness",
+    "Good vs Evil"
+   ],
+   "tones": [
+    "Heroic",
+    "Moral",
+    "Traditional",
+    "Justice-focused",
+    "Honorable"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "1860s-1890s",
+     "Post-Civil War",
+     "Frontier Era",
+     "Old West"
+    ],
+    "locations": [
+     "Frontier Towns",
+     "Cattle Ranches",
+     "Homesteads",
+     "Trading Posts",
+     "Frontier Churches"
+    ],
+    "environments": [
+     "Open Range",
+     "Main Street",
+     "Saloons",
+     "General Stores",
+     "Sheriff's Office"
+    ]
+   }
+  },
+  "Modern Western": {
+   "implied_settings": {
+    "contemporary_setting": true,
+    "western_values": true,
+    "rural_culture": true,
+    "modern_technology": true,
+    "traditional_conflicts": true
+   },
+   "protagonist_types": [
+    "Modern Rancher",
+    "Rural Sheriff",
+    "Rodeo Cowboy",
+    "Oil Worker",
+    "Small Town Mayor",
+    "Ranch Hand"
+   ],
+   "conflict_scales": [
+    "Corporate vs Rural",
+    "Development vs Tradition",
+    "Family Legacy",
+    "Environmental Issues",
+    "Economic Survival"
+   ],
+   "tones": [
+    "Contemporary",
+    "Realistic",
+    "Cultural",
+    "Economic",
+    "Traditional Values"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Present Day",
+     "Late 20th Century",
+     "Contemporary Era",
+     "Modern Times"
+    ],
+    "locations": [
+     "Modern Ranches",
+     "Small Western Towns",
+     "Rodeo Arenas",
+     "Oil Fields",
+     "Rural Communities"
+    ],
+    "environments": [
+     "Modern Ranch Houses",
+     "Pickup Trucks",
+     "Country Bars",
+     "Feed Stores",
+     "Rural Highways"
+    ]
+   }
+  },
+  "Outlaw Western": {
+   "implied_settings": {
+    "criminal_focus": true,
+    "anti_hero": true,
+    "lawlessness": true,
+    "moral_ambiguity": true,
+    "survival_focus": true
+   },
+   "protagonist_types": [
+    "Outlaw Leader",
+    "Bank Robber",
+    "Cattle Rustler",
+    "Gunslinger",
+    "Fugitive",
+    "Reformed Criminal"
+   ],
+   "conflict_scales": [
+    "Criminal Enterprise",
+    "Survival",
+    "Gang Loyalty",
+    "Law Pursuit",
+    "Personal Redemption"
+   ],
+   "tones": [
+    "Gritty",
+    "Morally Complex",
+    "Dangerous",
+    "Rebellious",
+    "Anti-establishment"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Post-Civil War",
+     "Lawless Territories",
+     "Gold Rush Era",
+     "Frontier Period"
+    ],
+    "locations": [
+     "Outlaw Hideouts",
+     "Remote Canyons",
+     "Border Towns",
+     "Abandoned Mines",
+     "Bandit Camps"
+    ],
+    "environments": [
+     "Hidden Valleys",
+     "Cave Systems",
+     "Desert Badlands",
+     "Mountain Passes",
+     "Ghost Towns"
+    ]
+   }
+  },
+  "Cattle Drive Western": {
+   "implied_settings": {
+    "cattle_industry": true,
+    "trail_life": true,
+    "teamwork": true,
+    "endurance": true,
+    "natural_challenges": true
+   },
+   "protagonist_types": [
+    "Trail Boss",
+    "Cowboy",
+    "Cattle Baron",
+    "Ranch Foreman",
+    "Drover",
+    "Cook"
+   ],
+   "conflict_scales": [
+    "Natural Obstacles",
+    "Cattle Rustlers",
+    "Territorial Disputes",
+    "Weather Challenges",
+    "Market Economics"
+   ],
+   "tones": [
+    "Adventure",
+    "Teamwork",
+    "Endurance",
+    "Traditional",
+    "Economic"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "1860s-1880s",
+     "Great Cattle Drives",
+     "Post-Civil War",
+     "Railroad Expansion"
+    ],
+    "locations": [
+     "Cattle Trails",
+     "River Crossings",
+     "Cattle Towns",
+     "Open Range",
+     "Railroad Terminals"
+    ],
+    "environments": [
+     "Trail Camps",
+     "Cattle Herds",
+     "Prairie Landscapes",
+     "Chuck Wagons",
+     "Stockyards"
+    ]
+   }
+  }
+ },
+ "Historical Fiction": {
+  "Ancient History": {
+   "implied_settings": {
+    "ancient_civilizations": true,
+    "mythological_elements": true,
+    "tribal_societies": true,
+    "ancient_religions": true,
+    "primitive_technology": true
+   },
+   "protagonist_types": [
+    "Ancient Warrior",
+    "Priest/Priestess",
+    "Tribal Leader",
+    "Ancient Scholar",
+    "Slave",
+    "Ancient Ruler"
+   ],
+   "conflict_scales": [
+    "Tribal Warfare",
+    "Religious Conflicts",
+    "Ancient Politics",
+    "Survival Struggles",
+    "Civilization Building"
+   ],
+   "tones": [
+    "Epic",
+    "Mythological",
+    "Primitive",
+    "Spiritual",
+    "Ancient"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Ancient Egypt",
+     "Ancient Greece",
+     "Ancient Rome",
+     "Prehistoric Times",
+     "Ancient Civilizations"
+    ],
+    "locations": [
+     "Ancient Temples",
+     "Tribal Villages",
+     "Ancient Cities",
+     "Sacred Sites",
+     "Ancient Palaces"
+    ],
+    "environments": [
+     "Ancient Architecture",
+     "Primitive Settlements",
+     "Sacred Grounds",
+     "Ancient Landscapes",
+     "Mythological Places"
+    ]
+   }
+  },
+  "Medieval": {
+   "implied_settings": {
+    "feudal_system": true,
+    "medieval_society": true,
+    "chivalric_code": true,
+    "religious_influence": true,
+    "period_authenticity": true
+   },
+   "protagonist_types": [
+    "Knight",
+    "Noble",
+    "Peasant",
+    "Monk/Nun",
+    "Merchant",
+    "Craftsperson"
+   ],
+   "conflict_scales": [
+    "Feudal Disputes",
+    "Religious Conflicts",
+    "Territorial Wars",
+    "Social Class Struggles",
+    "Medieval Politics"
+   ],
+   "tones": [
+    "Authentic",
+    "Chivalric",
+    "Religious",
+    "Feudal",
+    "Period-appropriate"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Early Medieval (500-1000)",
+     "High Medieval (1000-1300)",
+     "Late Medieval (1300-1500)",
+     "Medieval Period"
+    ],
+    "locations": [
+     "Medieval Castles",
+     "Monasteries",
+     "Medieval Towns",
+     "Feudal Estates",
+     "Medieval Courts"
+    ],
+    "environments": [
+     "Castle Halls",
+     "Medieval Villages",
+     "Monastery Grounds",
+     "Feudal Lands",
+     "Medieval Cities"
+    ]
+   }
+  },
+  "Renaissance": {
+   "implied_settings": {
+    "artistic_renaissance": true,
+    "scientific_revolution": true,
+    "political_intrigue": true,
+    "cultural_flowering": true,
+    "humanist_philosophy": true
+   },
+   "protagonist_types": [
+    "Renaissance Artist",
+    "Scientist/Inventor",
+    "Noble Patron",
+    "Merchant Prince",
+    "Scholar/Humanist",
+    "Court Politician"
+   ],
+   "conflict_scales": [
+    "Artistic Patronage",
+    "Scientific Discovery",
+    "Political Machinations",
+    "Religious Reform",
+    "Cultural Change"
+   ],
+   "tones": [
+    "Artistic",
+    "Intellectual",
+    "Political",
+    "Cultural",
+    "Innovative"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Early Renaissance (1400-1450)",
+     "High Renaissance (1450-1520)",
+     "Late Renaissance (1520-1600)",
+     "Renaissance Period"
+    ],
+    "locations": [
+     "Renaissance Cities",
+     "Artist Studios",
+     "Noble Courts",
+     "Universities",
+     "Merchant Houses"
+    ],
+    "environments": [
+     "Artistic Workshops",
+     "Renaissance Palaces",
+     "Academic Settings",
+     "Cultural Centers",
+     "Political Courts"
+    ]
+   }
+  },
+  "Colonial America": {
+   "implied_settings": {
+    "colonial_expansion": true,
+    "cultural_clash": true,
+    "exploration": true,
+    "settlement_building": true,
+    "indigenous_relations": true
+   },
+   "protagonist_types": [
+    "Colonial Settler",
+    "Explorer",
+    "Indigenous Person",
+    "Colonial Administrator",
+    "Missionary",
+    "Trader"
+   ],
+   "conflict_scales": [
+    "Cultural Conflicts",
+    "Territorial Disputes",
+    "Colonial Politics",
+    "Survival Challenges",
+    "Identity Struggles"
+   ],
+   "tones": [
+    "Exploratory",
+    "Cultural",
+    "Survival-focused",
+    "Political",
+    "Identity-driven"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Age of Exploration (1400-1600)",
+     "Colonial Period (1600-1800)",
+     "Settlement Era",
+     "Colonial Times"
+    ],
+    "locations": [
+     "Colonial Settlements",
+     "Trading Posts",
+     "Indigenous Villages",
+     "Colonial Cities",
+     "Frontier Territories"
+    ],
+    "environments": [
+     "Colonial Buildings",
+     "Frontier Settings",
+     "Trading Centers",
+     "Settlement Areas",
+     "Cultural Boundaries"
+    ]
+   }
+  },
+  "Civil War Era": {
+   "implied_settings": {
+    "civil_war_period": true,
+    "divided_nation": true,
+    "slavery_issues": true,
+    "brother_vs_brother": true,
+    "reconstruction_era": true
+   },
+   "protagonist_types": [
+    "Union Soldier",
+    "Confederate Soldier",
+    "Freed Slave",
+    "Plantation Owner",
+    "Abolitionist",
+    "War Correspondent"
+   ],
+   "conflict_scales": [
+    "Civil War Battles",
+    "Slavery vs Freedom",
+    "Family Divisions",
+    "Reconstruction",
+    "Social Change"
+   ],
+   "tones": [
+    "Dramatic",
+    "Tragic",
+    "Heroic",
+    "Divisive",
+    "Transformative"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "Pre-Civil War (1850-1861)",
+     "Civil War (1861-1865)",
+     "Reconstruction (1865-1877)",
+     "Antebellum Period"
+    ],
+    "locations": [
+     "Civil War Battlefields",
+     "Southern Plantations",
+     "Northern Cities",
+     "Underground Railroad",
+     "Military Camps"
+    ],
+    "environments": [
+     "Battlefield Settings",
+     "Plantation Houses",
+     "Military Encampments",
+     "Divided Communities",
+     "Reconstruction Areas"
+    ]
+   }
+  },
+  "World War Era": {
+   "implied_settings": {
+    "world_war_period": true,
+    "global_conflict": true,
+    "technological_warfare": true,
+    "home_front": true,
+    "international_scope": true
+   },
+   "protagonist_types": [
+    "Soldier",
+    "Resistance Fighter",
+    "Civilian",
+    "Nurse",
+    "Spy",
+    "War Correspondent"
+   ],
+   "conflict_scales": [
+    "Global Warfare",
+    "Resistance Movements",
+    "Home Front Struggles",
+    "Moral Choices",
+    "Survival"
+   ],
+   "tones": [
+    "Dramatic",
+    "Heroic",
+    "Tragic",
+    "Realistic",
+    "International"
+   ],
+   "setting_lists": {
+    "timeframes": [
+     "World War I (1914-1918)",
+     "Interwar Period (1918-1939)",
+     "World War II (1939-1945)",
+     "Post-War (1945-1950)"
+    ],
+    "locations": [
+     "European Battlefields",
+     "Pacific Theater",
+     "Home Front",
+     "Resistance Hideouts",
+     "Military Bases"
+    ],
+    "environments": [
+     "Trenches",
+     "Bombed Cities",
+     "Military Hospitals",
+     "Underground Bunkers",
+     "War Factories"
+    ]
+   }
+  }
+ }
+}
