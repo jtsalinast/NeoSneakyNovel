@@ -1,0 +1,809 @@
+<script>
+  import { onMount, tick } from 'svelte';
+  import { api, apiFetch } from '../lib/api.js';
+  import { config, progress, taskRunning, streamingContent, streamingChapterIdx, selectedChapter, autoConfirm, addToast, confirmModal } from '../lib/stores.js';
+  import { navigate } from '../lib/router.js';
+  import { t } from '../lib/i18n/index.js';
+  import { countProseUnits } from '../lib/proseUnits.js';
+  import TaskTokenBadge from '../components/TaskTokenBadge.svelte';
+  import KnowledgePanel from '../components/KnowledgePanel.svelte';
+  import { settings } from '../lib/stores.js';
+  let showKnowledge = false;
+  let knowledgeName = '', knowledgeDescription = '', knowledgeTags = '';
+  let selectedSettings = [];
+  let savingKnowledge = false;
+  async function saveKnowledge(revise = false) {
+    if (!knowledgeName.trim() || !knowledgeDescription.trim() || savingKnowledge) return;
+    savingKnowledge = true;
+    const target = ch?.num;
+    try {
+      const entry = await api('POST', '/api/worldview', {name: knowledgeName.trim(), description: knowledgeDescription.trim(), tags: knowledgeTags.trim(), category: 'knowledge'});
+      settings.update(s => ({...s, worldview: [...(s?.worldview || []).filter(w => w.id !== entry.id), entry]}));
+      knowledgeName = ''; knowledgeDescription = ''; knowledgeTags = '';
+      if (ch?.num === target) selectedSettings = [...new Set([...selectedSettings, entry.id])];
+      addToast($t('writing.knowledge.saved'), 'success');
+      if (revise && ch?.num === target) await doRevise();
+    } catch (e) { addToast(e.message, 'error'); }
+    finally { savingKnowledge = false; }
+  }
+  let facts = [];
+  let activeFact = null;
+  let knowledgeExpanded = false;
+  let returnRef = null;
+  let highlightedBlock = null;
+  let selectedBlockId = null;
+  $: factsByBlock = new Map(chapterBlocks.map(b => [b.id, facts.filter(f => (f.references || []).some(r => r.chapter === ch?.num && r.block_id === b.id))]));
+  const blockFacts = id => factsByBlock.get(id) || [];
+  function confirmAction(message, action) {
+    confirmModal.set({ message, onConfirm: action });
+  }
+  function selectBlock(id) {
+    if (editingBlockId != null || revisingBlockId != null || insertAfterId != null) return;
+    highlightedBlock = null;
+    selectedBlockId = selectedBlockId === id ? null : id;
+  }
+  async function jumpToFact(ref, returning = false) {
+    if (editingBlockId != null || revisingBlockId != null || insertAfterId != null) {
+      confirmAction($t('facts.discard'), () => { cancelBlockOps(); jumpToFact(ref, returning); });
+      return;
+    }
+    const idx = chapters.findIndex(c => c.num === ref.chapter);
+    if (idx < 0) { addToast($t('facts.stale'), 'warning'); return; }
+    if (!returning && !returnRef) returnRef = {chapter: ch?.num, block_id: highlightedBlock || chapterBlocks[0]?.id};
+    try {
+      const full = await api('GET', '/api/chapters/' + ref.chapter);
+      const block = (full.blocks || []).find(b => b.id === ref.block_id);
+      if (!block || (ref.quote && block.text !== ref.quote)) { addToast($t('facts.stale'), 'warning'); return; }
+      selectedChapter.set(idx);
+      loadedNum = ref.chapter;
+      applyChapter(ref.chapter, full);
+      highlightedBlock = ref.block_id;
+      await tick();
+      document.getElementById('story-block-' + ref.block_id)?.scrollIntoView({block: 'center', behavior: 'smooth'});
+      if (returning) returnRef = null;
+    } catch(e) { addToast(e.message, 'error'); }
+  }
+  function factHeaders(confirmed) {
+    return {'X-Content-Rev': loadedRev || '', 'X-Confirm-Fact-Impact': String(confirmed)};
+  }
+
+  const OUTLINE_FOCUS_KEY = 'showmethestory.outlineFocusChapter';
+
+  onMount(async () => {
+    try {
+      const res = await api('GET', '/api/autoconfirm');
+      autoConfirm.set(!!res.enabled);
+    } catch (e) {}
+    try {
+      const sk = await api('GET', '/api/skills');
+      hasPolishSkills = (sk || []).some(s => s.enabled && s.skill?.category === 'polish');
+    } catch (e) {}
+  });
+
+  async function toggleAutoConfirm(e) {
+    const enabled = e.target.checked;
+    try {
+      const res = await api('PUT', '/api/autoconfirm', { enabled });
+      autoConfirm.set(!!res.enabled);
+      addToast(res.enabled ? $t('writing.toasts.autoConfirmOn') : $t('writing.toasts.autoConfirmOff'), 'info');
+    } catch (err) {
+      e.target.checked = $autoConfirm;
+      addToast(err.message, 'error');
+    }
+  }
+
+  $: p = $progress;
+  $: inWriting = p?.phase === 'writing';
+  $: chapters = p?.chapters || [];
+  $: projectChapters = chapters.filter(c => !c.inherited);
+  $: total = projectChapters.length;
+  $: accepted = projectChapters.filter(c => c.status === 'accepted').length;
+  $: pct = total > 0 ? Math.round(accepted / total * 100) : 0;
+  $: currentIdx = p?.current_chapter_index ?? 0;
+
+  // 默认选中当前章节
+  $: if (inWriting && ($selectedChapter < 0 || $selectedChapter >= chapters.length)) {
+    selectedChapter.set(Math.min(currentIdx, chapters.length - 1));
+  }
+
+  // 自动确认模式下，自动跟随正在生成的章节
+  $: if ($autoConfirm && $streamingChapterIdx >= 0 && $streamingChapterIdx < chapters.length && $streamingChapterIdx !== $selectedChapter) {
+    selectedChapter.set($streamingChapterIdx);
+  }
+
+  $: ch = $selectedChapter >= 0 && $selectedChapter < chapters.length ? chapters[$selectedChapter] : null;
+  $: isCurrent = ch && currentIdx === $selectedChapter;
+  $: isStreamingThis = $streamingChapterIdx === $selectedChapter && $streamingContent;
+
+  // /api/progress 不携带正文，选中章节的正文按需拉取，content_rev 变化时刷新
+  let chapterContent = '';
+  let chapterBlocks = [];
+  let loadedNum = -1;
+  let loadedRev = null;
+  $: if (ch) maybeLoadContent(ch);
+  function applyChapter(num, full) {
+    if (loadedNum !== num) return;
+    chapterContent = full.content || '';
+    chapterBlocks = full.blocks || [];
+    loadedRev = full.content_rev || '';
+  }
+  async function maybeLoadContent(c) {
+    const rev = c.content_rev || '';
+    if (c.num === loadedNum && rev === loadedRev) return;
+    if (c.num !== loadedNum) selectedBlockId = null;
+    loadedNum = c.num;
+    loadedRev = rev;
+    if (!rev) { chapterContent = ''; chapterBlocks = []; return; }
+    try {
+      const full = await api('GET', '/api/chapters/' + c.num);
+      applyChapter(c.num, full);
+    } catch (e) {}
+  }
+  $: hasContent = !!(ch?.content_rev);
+
+  // —— Block 编辑 ——
+  let editingBlockId = null;   // 正在内联编辑的 block
+  let editingText = '';
+  let revisingBlockId = null;  // 正在填写 AI 修订意见的 block
+  let blockFeedback = '';
+  let insertAfterId = null;    // 正在其后插入新 block 的 id（0 = 开头）
+  let insertText = '';
+
+  function startBlockEdit(b) {
+    selectedBlockId = b.id;
+    editingBlockId = b.id;
+    editingText = b.text;
+    revisingBlockId = null;
+    insertAfterId = null;
+  }
+  function startBlockRevise(b) {
+    selectedBlockId = b.id;
+    revisingBlockId = b.id;
+    blockFeedback = '';
+    editingBlockId = null;
+    insertAfterId = null;
+  }
+  function startBlockInsert(afterId) {
+    insertAfterId = afterId;
+    insertText = '';
+    editingBlockId = null;
+    revisingBlockId = null;
+  }
+  function cancelBlockOps() {
+    editingBlockId = null;
+    revisingBlockId = null;
+    insertAfterId = null;
+  }
+
+  async function saveBlockEdit(confirmed = false) {
+    if (editingBlockId == null || !editingText.trim() || !ch) return;
+    if (confirmed !== true && blockFacts(editingBlockId).length) {
+      confirmAction($t('facts.confirm') + '\n' + blockFacts(editingBlockId).map(f => f.content).join('\n'), () => saveBlockEdit(true)); return;
+    }
+    try {
+      const full = await api('PUT', `/api/chapters/${ch.num}/blocks/${editingBlockId}`, { text: editingText }, factHeaders(confirmed === true));
+      applyChapter(ch.num, full);
+      cancelBlockOps();
+      addToast($t('writing.block.saved'), 'success');
+    } catch (e) { addToast(e.message, 'error'); }
+  }
+
+  function deleteBlock(b) {
+    if (!ch) return;
+    confirmModal.set({
+      message: $t('writing.block.deleteConfirm') + (blockFacts(b.id).length ? '\n' + $t('facts.confirm') + '\n' + blockFacts(b.id).map(f => f.content).join('\n') : ''),
+      onConfirm: async () => {
+        try {
+          const full = await api('DELETE', `/api/chapters/${ch.num}/blocks/${b.id}`, null, factHeaders(true));
+          applyChapter(ch.num, full);
+          addToast($t('writing.block.deleted'), 'success');
+        } catch (e) { addToast(e.message, 'error'); }
+      },
+    });
+  }
+
+  async function saveBlockInsert() {
+    if (insertAfterId == null || !insertText.trim() || !ch) return;
+    try {
+      const full = await api('POST', `/api/chapters/${ch.num}/blocks`, { after_id: insertAfterId, text: insertText }, factHeaders(false));
+      applyChapter(ch.num, full);
+      cancelBlockOps();
+      addToast($t('writing.block.inserted'), 'success');
+    } catch (e) { addToast(e.message, 'error'); }
+  }
+
+  async function submitBlockRevise(confirmed = false) {
+    if (revisingBlockId == null || !blockFeedback.trim() || !ch) return;
+    if (confirmed !== true && blockFacts(revisingBlockId).length) {
+      confirmAction($t('facts.confirmAI') + '\n' + blockFacts(revisingBlockId).map(f => f.content).join('\n'), () => submitBlockRevise(true)); return;
+    }
+    try {
+      await api('POST', `/api/chapters/${ch.num}/blocks/${revisingBlockId}/revise`, { feedback: blockFeedback }, factHeaders(confirmed === true));
+      addToast($t('writing.block.reviseStarted'), 'info');
+      cancelBlockOps();
+    } catch (e) { addToast(e.message, 'error'); }
+  }
+
+  // 流式期间 $streamingContent 只含尾部窗口（性能保护），全文在生成结束后按需拉取
+  $: displayContent = isStreamingThis ? $streamingContent : chapterContent;
+  $: chapterWordCount = ch?.word_count || (chapterContent ? countProseUnits(chapterContent) : 0);
+  $: showTaskTokens = $taskRunning && isCurrent;
+  $: totalWords = chapters.reduce((sum, c) => sum + (c.word_count || 0), 0);
+
+  $: foreshadows = p?.foreshadows || [];
+  $: fsActive = foreshadows.filter(f => f.status === 'planted' || f.status === 'progressing');
+  $: fsOverdue = fsActive.filter(f => f.target_chapter > 0 && (currentIdx + 1) > f.target_chapter);
+  $: fsNearTarget = fsActive.filter(f =>
+    f.target_chapter > 0 && (currentIdx + 1) >= f.target_chapter - 2 && (currentIdx + 1) <= f.target_chapter
+  );
+  $: writingConflict = p?.pending_writing_conflict || null;
+  $: orphanWriting = !!(ch && isCurrent && ch.status === 'writing' && !writingConflict && !$taskRunning);
+
+  async function resolveWritingConflict(action) {
+    if ($taskRunning) return;
+    try {
+      const res = await api('POST', '/api/chapter/conflict-resolve', { action });
+      if (action === 'retry') {
+        progress.set(await api('GET', '/api/progress'));
+        await api('POST', '/api/chapter/generate');
+        addToast($t('writing.toasts.generateStarted', { num: writingConflict?.chapter_num || ch?.num }), 'info');
+        return;
+      }
+      progress.set(res);
+      // dismiss ≡ force_review on the server
+      if (action === 'force_review' || action === 'dismiss') {
+        addToast($t('writing.conflict.forceReview'), 'success');
+      }
+    } catch (e) {
+      addToast(e.message, 'error');
+    }
+  }
+
+  function gotoOutlineForConflict() {
+    const num = writingConflict?.chapter_num || ch?.num;
+    if (num) {
+      try { sessionStorage.setItem(OUTLINE_FOCUS_KEY, String(num)); } catch {}
+    }
+    navigate('outline');
+  }
+
+  function gotoForeshadows() {
+    navigate('foreshadows');
+  }
+
+  $: statusMeta = {
+    pending:  { label: $t('writing.status.pending'),  cls: 'badge-ghost',   dot: 'bg-base-content/20' },
+    writing:  { label: $t('writing.status.writing'),  cls: 'badge-warning', dot: 'bg-warning animate-pulse' },
+    review:   { label: $t('writing.status.review'),   cls: 'badge-info',    dot: 'bg-info' },
+    accepted: { label: $t('writing.status.accepted'), cls: 'badge-success', dot: 'bg-success' },
+  };
+
+  let reviseFeedback = '';
+  let showRevise = false;
+  let contentEl;
+  let reviseTextareaEl;
+  let hasPolishSkills = false;
+
+  // 框选原文后的浮动「引用」按钮：null 表示隐藏
+  let quotePopover = null;
+
+  function checkContentSelection() {
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed || sel.rangeCount === 0) { quotePopover = null; return; }
+    const text = sel.toString().trim();
+    if (!text || text.length < 2) { quotePopover = null; return; }
+    const range = sel.getRangeAt(0);
+    if (!contentEl || !contentEl.contains(range.commonAncestorContainer)) {
+      quotePopover = null; return;
+    }
+    const rect = range.getBoundingClientRect();
+    if (rect.width === 0 && rect.height === 0) { quotePopover = null; return; }
+    quotePopover = {
+      text,
+      x: rect.left + rect.width / 2,
+      y: rect.top,
+    };
+  }
+
+  function hideQuotePopover() { quotePopover = null; }
+
+  function insertQuoteToFeedback() {
+    if (!quotePopover) return;
+    const text = quotePopover.text;
+    const quoteLine = `> ${text}`;
+    // 若用户已在修改意见里写过内容，先确保引用行与原内容之间有空行分隔
+    const current = reviseFeedback;
+    let insertion;
+    if (current === '') {
+      insertion = quoteLine + '\n';
+    } else if (current.endsWith('\n')) {
+      insertion = quoteLine + '\n';
+    } else {
+      insertion = '\n' + quoteLine + '\n';
+    }
+    // 优先在 textarea 光标位置插入；否则追加到末尾
+    const ta = reviseTextareaEl;
+    if (ta && document.activeElement === ta && ta.selectionStart != null) {
+      const start = ta.selectionStart;
+      const end = ta.selectionEnd;
+      reviseFeedback = current.slice(0, start) + insertion + current.slice(end);
+      requestAnimationFrame(() => {
+        ta.focus();
+        const pos = start + insertion.length;
+        ta.setSelectionRange(pos, pos);
+      });
+    } else {
+      reviseFeedback = current + insertion;
+      requestAnimationFrame(() => {
+        if (ta) { ta.focus(); const pos = reviseFeedback.length; ta.setSelectionRange(pos, pos); }
+      });
+    }
+    showRevise = true;
+    addToast($t('writing.toasts.quoteInserted', { n: text.length }), 'success');
+    // 清空选区并隐藏按钮
+    const sel = window.getSelection();
+    if (sel) sel.removeAllRanges();
+    hideQuotePopover();
+  }
+
+  // 流式输出时自动滚动到底部：合并到 rAF，每帧最多一次，避免高频强制重排
+  let scrollPending = false;
+  function scheduleScroll() {
+    if (scrollPending) return;
+    scrollPending = true;
+    requestAnimationFrame(() => {
+      scrollPending = false;
+      if (contentEl) contentEl.scrollTop = contentEl.scrollHeight;
+    });
+  }
+  $: if (isStreamingThis && contentEl) scheduleScroll();
+
+  function selectChapter(i) {
+    if (savingKnowledge) return;
+    selectedSettings = [];
+    showKnowledge = false;
+    selectedChapter.set(i);
+    maybeLoadContent(chapters[i]);
+    showRevise = false;
+    reviseFeedback = '';
+    hideQuotePopover();
+    cancelBlockOps();
+  }
+
+  async function doGenerate() {
+    try {
+      await api('POST', '/api/chapter/generate');
+      addToast($t('writing.toasts.generateStarted', { num: ch?.num }), 'info');
+    } catch (e) { addToast(e.message, 'error'); }
+  }
+
+  async function doConfirm() {
+    try {
+      await api('POST', '/api/chapter/confirm');
+      progress.set(await api('GET', '/api/progress'));
+      addToast($t('writing.toasts.confirmed', { num: ch?.num }), 'success');
+      // 跳到下一章
+      const next = await api('GET', '/api/progress');
+      if (next.current_chapter_index < (next.chapters || []).length) {
+        selectedChapter.set(next.current_chapter_index);
+      }
+    } catch (e) { addToast(e.message, 'error'); }
+  }
+
+  async function doRevise(confirmed = false) {
+    const fb = reviseFeedback.trim();
+    if (!fb && !selectedSettings.length) { addToast($t('writing.toasts.feedbackRequired'), 'error'); return; }
+    if (!ch) return;
+    const num = ch.num;
+    const rev = loadedRev;
+    if (selectedSettings.length && confirmed !== true) {
+      try {
+        const knowledge = await api('GET', '/api/knowledge?chapter=' + num);
+        if (ch?.num !== num || loadedRev !== rev) return;
+        if (knowledge.facts?.length) {
+          confirmAction($t('writing.knowledge.confirm') + '\n' + knowledge.facts.map(f => f.content).join('\n'), () => {
+            if (ch?.num === num && loadedRev === rev) doRevise(true);
+          });
+          return;
+        }
+      } catch (e) { addToast(e.message, 'error'); return; }
+    }
+    const body = { feedback: fb, worldview_ids: selectedSettings };
+    try {
+      if (!selectedSettings.length && isCurrent && ch.status === 'review') {
+        // 当前审核中章节：完整修订流程
+        await api('POST', '/api/chapter/revise', body, factHeaders(confirmed === true));
+      } else {
+        // 其他章节（含已确认）：定向最小化修订，不影响其他章节
+        await api('POST', '/api/chapter/revise/' + ch.num, body, factHeaders(confirmed === true));
+      }
+      addToast($t('writing.toasts.reviseStarted', { num: ch.num }), 'info');
+      reviseFeedback = '';
+      showRevise = false;
+      showKnowledge = false;
+      selectedSettings = [];
+    } catch (e) { addToast(e.message, 'error'); }
+  }
+
+  async function doPolish() {
+    if (!ch) return;
+    try {
+      await api('POST', '/api/chapter/polish', { num: ch.num });
+      addToast($t('writing.toasts.polishStarted', { num: ch.num }), 'info');
+    } catch (e) { addToast(e.message, 'error'); }
+  }
+
+  async function copyContent() {
+    if (!chapterContent) return;
+    try {
+      await navigator.clipboard.writeText(chapterContent);
+      addToast($t('writing.toasts.copied'), 'success');
+    } catch (e) { addToast($t('common.copy.failed'), 'error'); }
+  }
+
+  async function exportBook() {
+    const written = chapters.filter(c => c.content_rev);
+    if (written.length === 0) { addToast($t('writing.toasts.exportEmpty'), 'error'); return; }
+    try {
+      const r = await apiFetch('/api/export/txt');
+      const blob = await r.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${$config?.story?.title || p.title || $t('writing.export.defaultName')}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+      addToast($t('writing.toasts.exportDone', { n: written.length }), 'success');
+    } catch (e) { addToast(e.message, 'error'); }
+  }
+
+  function prevChapter() { if ($selectedChapter > 0) selectChapter($selectedChapter - 1); }
+  function nextChapter() { if ($selectedChapter < chapters.length - 1) selectChapter($selectedChapter + 1); }
+
+  function smoothTransitions() {
+    confirmModal.set({
+      message: $t('writing.toasts.smoothAsk'),
+      onConfirm: async () => {
+        try {
+          await api('POST', '/api/chapters/smooth-transitions');
+          addToast($t('writing.toasts.smoothStarted'), 'info');
+        } catch (e) { addToast(e.message, 'error'); }
+      },
+    });
+  }
+  async function setBookCompleted(completed) {
+    const active = foreshadows.filter(f => f.status !== "resolved" && f.status !== "abandoned").length;
+    const run = async () => {
+      try {
+        const suffix = completed && active ? "?confirm_foreshadows=true" : "";
+        progress.set(await api("POST", completed ? "/api/story/complete" + suffix : "/api/story/resume"));
+        addToast($t(completed ? "writing.book.completed" : "writing.book.resumed"), "success");
+      } catch (e) { addToast(e.message, "error"); }
+    };
+    if (completed && active) {
+      confirmModal.set({ message: $t("writing.book.foreshadowConfirm", { n: active }), onConfirm: run });
+    } else {
+      await run();
+    }
+  }
+</script>
+
+{#if !inWriting}
+  <div class="text-center py-16 text-base-content/65">
+    <div class="text-5xl mb-4"></div>
+    <p class="text-base mb-1">{$t('writing.notReady.title')}</p>
+    <p class="text-sm text-base-content/65 mb-6">{$t('writing.notReady.hint')}</p>
+    <button class="btn btn-primary btn-sm" on:click={() => window.location.hash = '#outline'}>{$t('writing.notReady.goto')}</button>
+  </div>
+{:else}
+  <div class="space-y-4">
+    {#if p.book_status !== 'completed' && (p.outline_batches || []).some(b => b.planned_final && chapters.find(c => c.num === b.end_ch)?.status === 'accepted')}
+      <p class="alert alert-info">{$t('ending.completeHint')}</p>
+    {/if}
+
+    <!-- 进度 -->
+    <div class="card bg-base-200">
+      <div class="card-body p-4 gap-2">
+        <div class="flex items-center gap-3">
+          <h2 class="card-title text-base flex-1">{$t('writing.progress.title')}</h2>
+          <label class="flex items-center gap-1.5 cursor-pointer" title={$t('writing.progress.autoConfirmTip')}>
+            <input type="checkbox" class="toggle toggle-xs toggle-success" checked={$autoConfirm} on:change={toggleAutoConfirm} />
+            <span class="text-xs text-base-content/60">{$t('writing.progress.autoConfirm')}</span>
+          </label>
+          <span class="text-xs text-base-content/65">{$t('writing.progress.totalWords', { n: totalWords.toLocaleString() })}</span>
+          {#if accepted >= 2}
+            <button class="btn btn-outline btn-xs" on:click={smoothTransitions} disabled={$taskRunning} title={$t('writing.btn.smoothTransitions.tip')}>{$t('writing.btn.smoothTransitions')}</button>
+          {/if}
+          <button class="btn btn-outline btn-xs" on:click={exportBook}>{$t('writing.btn.exportTxt')}</button>
+			{#if p.book_status === 'completed'}
+				<button class="btn btn-warning btn-xs" on:click={() => setBookCompleted(false)} disabled={$taskRunning}>{$t('writing.book.resume')}</button>
+			{:else}
+				<button class="btn btn-success btn-xs" on:click={() => setBookCompleted(true)} disabled={$taskRunning}>{$t('writing.book.complete')}</button>
+			{/if}
+        </div>
+        <progress class="progress progress-primary w-full" value={pct} max="100"></progress>
+        <div class="text-sm text-base-content/65">{$t('writing.progress.acceptedSummary', { pct, accepted, total })}</div>
+      </div>
+    </div>
+
+    {#if writingConflict}
+      <div class="card bg-error/10 border border-error/30 ">
+        <div class="card-body p-4 gap-3">
+          <h3 class="font-semibold text-error">{$t('writing.conflict.title')}</h3>
+          <p class="text-sm">{$t('writing.conflict.summary')}：{writingConflict.summary}</p>
+          {#if writingConflict.issues?.length}
+            <div class="text-xs text-base-content/70">
+              <div class="font-medium mb-1">{$t('writing.conflict.issues')}</div>
+              <ul class="list-disc list-inside space-y-0.5">
+                {#each writingConflict.issues as issue}
+                  <li>{issue}</li>
+                {/each}
+              </ul>
+            </div>
+          {/if}
+          <div class="flex flex-wrap gap-2">
+            {#each (writingConflict.suggested_actions || []) as action}
+              {#if action.id === 'edit_outline'}
+                <button class="btn btn-warning btn-xs" disabled={$taskRunning} on:click={gotoOutlineForConflict}>{$t('writing.conflict.gotoOutline')}</button>
+              {:else if action.id === 'adjust_foreshadow'}
+                <button class="btn btn-warning btn-xs" disabled={$taskRunning} on:click={gotoForeshadows}>{$t('writing.conflict.gotoForeshadows')}</button>
+              {:else if action.id === 'retry'}
+                <button class="btn btn-primary btn-xs" disabled={$taskRunning} on:click={() => resolveWritingConflict('retry')}>{$t('writing.conflict.retry')}</button>
+              {:else if action.id === 'force_review'}
+                <button class="btn btn-outline btn-xs" disabled={$taskRunning} on:click={() => resolveWritingConflict('force_review')}>{$t('writing.conflict.forceReview')}</button>
+              {/if}
+            {/each}
+            <button class="btn btn-ghost btn-xs" disabled={$taskRunning} on:click={() => resolveWritingConflict('dismiss')}>{$t('writing.conflict.dismiss')}</button>
+          </div>
+        </div>
+      </div>
+    {:else if orphanWriting}
+      <div class="card bg-warning/10 border border-warning/30 ">
+        <div class="card-body p-4 gap-3">
+          <h3 class="font-semibold text-warning">{$t('writing.orphan.title')}</h3>
+          <p class="text-sm text-base-content/70">{$t('writing.orphan.hint')}</p>
+          <div class="flex flex-wrap gap-2">
+            <button class="btn btn-primary btn-xs" disabled={$taskRunning} on:click={doGenerate}>{$t('writing.orphan.retry')}</button>
+            <button class="btn btn-outline btn-xs" disabled={$taskRunning} on:click={() => resolveWritingConflict('force_review')}>{$t('writing.orphan.forceReview')}</button>
+            <button class="btn btn-warning btn-xs" disabled={$taskRunning} on:click={gotoOutlineForConflict}>{$t('writing.conflict.gotoOutline')}</button>
+            <button class="btn btn-warning btn-xs" disabled={$taskRunning} on:click={gotoForeshadows}>{$t('writing.conflict.gotoForeshadows')}</button>
+          </div>
+        </div>
+      </div>
+    {/if}
+
+    {#if foreshadows.length > 0}
+      <div class="card bg-base-200">
+        <div class="card-body p-4 gap-2">
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="font-medium text-sm">{$t('writing.fs.title')}</h3>
+            <button class="btn btn-outline btn-xs" on:click={() => window.location.hash = '#foreshadows'}>{$t('writing.fs.goto')}</button>
+          </div>
+          <div class="flex flex-wrap gap-2 text-xs">
+            <span class="badge badge-ghost">{$t('writing.fs.total', { n: foreshadows.length })}</span>
+            <span class="badge badge-info badge-outline">{$t('writing.fs.active', { n: fsActive.length })}</span>
+            {#if fsOverdue.length > 0}
+              <span class="badge badge-error">{$t('writing.fs.overdue', { n: fsOverdue.length })}</span>
+            {/if}
+            {#if fsNearTarget.length > 0}
+              <span class="badge badge-warning badge-outline">{$t('writing.fs.nearTarget', { n: fsNearTarget.length })}</span>
+            {/if}
+          </div>
+          {#if fsOverdue.length > 0}
+            <p class="text-xs text-warning">{$t('writing.fs.overdueDetail', { names: fsOverdue.map(f => `#${f.id} ${f.name}`).join(', ') })}</p>
+          {:else if fsNearTarget.length > 0}
+            <p class="text-xs text-base-content/65">{$t('writing.fs.nearDetail', { names: fsNearTarget.map(f => f.name).join(', ') })}</p>
+          {/if}
+        </div>
+      </div>
+    {:else}
+      <div class="card bg-base-200">
+        <div class="card-body p-4 flex items-center justify-between gap-2">
+          <p class="text-sm text-base-content/65">{$t('writing.fs.none')}</p>
+          <button class="btn btn-outline btn-xs" on:click={() => window.location.hash = '#foreshadows'}>{$t('writing.fs.setup')}</button>
+        </div>
+      </div>
+    {/if}
+
+    <!-- 章节区 -->
+    <div class="writing-grid grid grid-cols-[345px_minmax(0,1fr)] gap-3" style="min-height:400px">
+      <!-- 章节列表 -->
+      <div class="card bg-base-200  overflow-y-auto max-h-[calc(100vh-280px)]">
+        <ul class="menu menu-sm p-0 w-full">
+          {#each chapters as c, i}
+            <li>
+              <button class="flex gap-2 items-center {$selectedChapter === i ? 'active' : ''}" on:click={() => selectChapter(i)}>
+                <span class="w-2 h-2 rounded-full shrink-0 {statusMeta[c.status]?.dot || ''}"></span>
+                <span class="text-base-content/65 w-6 shrink-0 text-right">{c.num}</span>
+                <span class="flex-1 text-left truncate text-sm">{c.title}</span>
+                {#if i === currentIdx && c.status !== 'accepted'}
+                  <span class="badge badge-primary badge-xs shrink-0">{$t('writing.tag.current')}</span>
+                {/if}
+              </button>
+            </li>
+          {/each}
+        </ul>
+      </div>
+
+      <!-- 内容区 -->
+      <div class="min-w-0">
+        {#if ch}
+          <div class="card bg-base-200">
+            <div class="card-body p-4 gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                <h2 class="card-title text-base flex-1 min-w-0">{$t('writing.chapter.title', { num: ch.num, title: ch.title })}</h2>
+                <span class="badge badge-sm {statusMeta[ch.status]?.cls || 'badge-ghost'}">{statusMeta[ch.status]?.label || ch.status}</span>
+                {#if showTaskTokens}
+                  <TaskTokenBadge className="text-xs text-base-content/65 font-mono" />
+                {:else if chapterWordCount > 0}
+                  <span class="text-xs text-base-content/65">{$t('writing.chapter.words', { n: chapterWordCount.toLocaleString() })}</span>
+                {/if}
+              </div>
+
+              <KnowledgePanel chapterNum={ch.num} bind:facts bind:activeFact bind:expanded={knowledgeExpanded} on:jump={e => jumpToFact(e.detail)} />
+              {#if returnRef}<button class="btn btn-outline btn-xs self-start" on:click={() => jumpToFact(returnRef, true)}>{$t('facts.return')}</button>{/if}
+
+              {#if ch.outline}
+                <details class="bg-base-300 rounded">
+                  <summary class="p-2 text-xs text-base-content/65 cursor-pointer select-none">{$t('writing.chapter.outline')}</summary>
+                  <div class="px-2 pb-2 text-sm text-base-content/70">{ch.outline}</div>
+                </details>
+              {/if}
+
+              {#if ch.summary}
+                <details class="bg-base-300 rounded">
+                  <summary class="p-2 text-xs text-base-content/65 cursor-pointer select-none">{$t('writing.chapter.summary')}</summary>
+                  <div class="px-2 pb-2 text-sm text-base-content/70 whitespace-pre-wrap">{ch.summary}</div>
+                </details>
+              {/if}
+
+              {#if displayContent}
+                {#if isStreamingThis}
+                  <div class="text-xs text-warning/80 flex items-center gap-1.5">
+                    <span class="loading loading-dots loading-xs"></span>
+                    {$t('writing.chapter.streamHint')}
+                  </div>
+                {/if}
+                <!-- svelte-ignore a11y-no-static-element-interactions -->
+                <div bind:this={contentEl} class="bg-base-300 rounded-lg p-4 text-[15px] chapter-content reading-area max-h-[calc(100vh-420px)] min-h-[200px] overflow-y-auto"
+                     on:mouseup={checkContentSelection}
+                     on:scroll={hideQuotePopover}>
+                  {#if isStreamingThis}
+                    {displayContent}
+                    <span class="inline-block w-2 h-4 bg-primary/70 animate-pulse ml-0.5 align-text-bottom"></span>
+                  {:else if chapterBlocks.length > 0}
+                    <div class="space-y-3">
+                      {#each chapterBlocks as b (b.id)}
+                        <div id={'story-block-' + b.id} class="relative rounded -mx-2 px-2 py-1 cursor-pointer transition-colors hover:bg-base-100/40 {highlightedBlock === b.id || activeFact?.references?.some(r => !r.stale && r.chapter === ch.num && r.block_id === b.id) ? 'bg-info/20' : selectedBlockId === b.id ? 'bg-primary/10' : ''}" role="button" tabindex="0" aria-pressed={selectedBlockId===b.id} on:click={() => selectBlock(b.id)} on:keydown={(e) => { if (e.currentTarget === e.target && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); selectBlock(b.id); } }}>
+                          {#if blockFacts(b.id).length}<div class="flex flex-wrap gap-1 mb-2">{#each blockFacts(b.id) as fact}<button class="badge badge-warning badge-sm cursor-pointer" on:click|stopPropagation={() => { activeFact = fact; highlightedBlock = b.id; knowledgeExpanded = true; }}>{$t('facts.marker')} #{fact.id}</button>{/each}</div>{/if}
+                          {#if editingBlockId === b.id}
+                            <textarea class="textarea textarea-sm w-full text-[15px] leading-relaxed" rows={Math.max(3, Math.ceil(b.text.length / 40))} bind:value={editingText} disabled={$taskRunning}></textarea>
+                            <div class="flex gap-2 justify-end mt-1">
+                              <button class="btn btn-ghost btn-xs" on:click={cancelBlockOps}>{$t('common.cancel')}</button>
+                              <button class="btn btn-primary btn-xs" on:click={saveBlockEdit} disabled={$taskRunning || !editingText.trim()}>{$t('common.save')}</button>
+                            </div>
+                          {:else}
+                            <div class="whitespace-pre-wrap {b.type === 'scene_break' ? 'text-center text-base-content/65' : ''}">{b.text}</div>
+                            {#if selectedBlockId === b.id}<div class="absolute right-1 top-1 flex gap-1 bg-base-200 border border-base-content/20 rounded px-1 py-0.5"><button class="btn btn-outline btn-xs" disabled={$taskRunning} on:click|stopPropagation={() => startBlockEdit(b)}>{$t('writing.block.edit')}</button><button class="btn btn-outline btn-xs" disabled={$taskRunning} on:click|stopPropagation={() => startBlockRevise(b)}>{$t('writing.block.revise')}</button><button class="btn btn-outline btn-xs" disabled={$taskRunning} on:click|stopPropagation={() => startBlockInsert(b.id)}>{$t('writing.block.insertAfter')}</button><button class="btn btn-error btn-outline btn-xs" disabled={$taskRunning} on:click|stopPropagation={() => deleteBlock(b)}>{$t('writing.block.delete')}</button></div>{/if}
+                          {/if}
+                          {#if revisingBlockId === b.id}
+                            <div class="bg-base-100 rounded p-2 mt-1 space-y-1">
+                              <textarea class="textarea textarea-sm w-full h-16 text-sm" bind:value={blockFeedback} placeholder={$t('writing.block.revisePlaceholder')} disabled={$taskRunning}></textarea>
+                              <div class="flex gap-2 justify-end">
+                                <button class="btn btn-ghost btn-xs" on:click={cancelBlockOps}>{$t('common.cancel')}</button>
+                                <button class="btn btn-primary btn-xs" on:click={submitBlockRevise} disabled={$taskRunning || !blockFeedback.trim()}>{$t('writing.block.reviseSubmit')}</button>
+                              </div>
+                            </div>
+                          {/if}
+                          {#if insertAfterId === b.id}
+                            <div class="bg-base-100 rounded p-2 mt-1 space-y-1">
+                              <textarea class="textarea textarea-sm w-full h-16 text-sm" bind:value={insertText} placeholder={$t('writing.block.insertPlaceholder')} disabled={$taskRunning}></textarea>
+                              <div class="flex gap-2 justify-end">
+                                <button class="btn btn-ghost btn-xs" on:click={cancelBlockOps}>{$t('common.cancel')}</button>
+                                <button class="btn btn-primary btn-xs" on:click={saveBlockInsert} disabled={$taskRunning || !insertText.trim()}>{$t('writing.block.insertSubmit')}</button>
+                              </div>
+                            </div>
+                          {/if}
+                        </div>
+                      {/each}
+                    </div>
+                  {:else}
+                    {displayContent}
+                  {/if}
+                </div>
+                {#if quotePopover}
+                  <button type="button"
+                    class="fixed z-50 btn btn-primary btn-xs"
+                    style="left: {quotePopover.x}px; top: {quotePopover.y}px; transform: translate(-50%, -100%); margin-top: -6px;"
+                    on:click={insertQuoteToFeedback}
+                    title={$t('writing.revise.quoteBtn.tip')}>
+                    {$t('writing.revise.quoteBtn')}
+                  </button>
+                {/if}
+              {:else if ch.status === 'pending'}
+                <div class="bg-base-300 rounded-lg p-6 text-center text-sm text-base-content/65">
+                  {#if isCurrent}
+                    {$t('writing.chapter.pendingCurrent')}
+                  {:else}
+                    {$t('writing.chapter.pendingOther', { n: chapters[currentIdx]?.num ?? '-' })}
+                  {/if}
+                </div>
+              {/if}
+
+              <!-- 操作 -->
+              <div class="flex gap-2 flex-wrap items-center mt-1">
+                {#if ch.status === 'pending' && isCurrent}
+                  <button class="btn btn-primary btn-sm" on:click={doGenerate} disabled={$taskRunning}>{$t('writing.btn.generate')}</button>
+                {/if}
+                {#if ch.status === 'review' && isCurrent}
+                  <button class="btn btn-success btn-sm" on:click={doConfirm} disabled={$taskRunning}>{$t('writing.btn.confirm')}</button>
+                {/if}
+                {#if hasContent && ch.status !== 'writing'}
+                  <button class="btn btn-outline btn-sm" on:click={() => showRevise = !showRevise} disabled={$taskRunning}>{$t('writing.btn.revise')}</button>
+                  <button class="btn btn-outline btn-sm" on:click={() => { showKnowledge = !showKnowledge; showRevise = true; if (!showKnowledge) selectedSettings = []; }} disabled={$taskRunning || savingKnowledge}>{$t('writing.knowledge.title')}</button>
+                  {#if hasPolishSkills}
+                    <button class="btn btn-outline btn-sm" on:click={doPolish} disabled={$taskRunning} title={$t('writing.btn.polish.tip')}>{$t('writing.btn.polish')}</button>
+                  {/if}
+                  <button class="btn btn-outline btn-sm" on:click={copyContent}>{$t('writing.btn.copy')}</button>
+                {/if}
+                <div class="flex-1"></div>
+                <div class="join">
+                  <button class="btn btn-ghost btn-xs join-item" on:click={prevChapter} disabled={$selectedChapter <= 0}>{$t('writing.btn.prev')}</button>
+                  <button class="btn btn-ghost btn-xs join-item" on:click={nextChapter} disabled={$selectedChapter >= chapters.length - 1}>{$t('writing.btn.next')}</button>
+                </div>
+              </div>
+
+              {#if showRevise}
+                <div class="bg-base-300 rounded-lg p-3 space-y-2">
+                    {#if showKnowledge}
+                      <fieldset class="border border-base-content/20 rounded-lg p-3 space-y-3" disabled={$taskRunning || savingKnowledge}>
+                        <legend>{$t('writing.knowledge.title')}</legend>
+                        <p class="text-sm">{$t('writing.knowledge.hint')}</p>
+                        <label class="block text-sm">{$t('config.wv.name')}<input class="input input-sm w-full" bind:value={knowledgeName} /></label>
+                        <label class="block text-sm">{$t('config.wv.description')}<textarea class="textarea w-full" rows="4" bind:value={knowledgeDescription}></textarea></label>
+                        <label class="block text-sm">{$t('config.wv.tags')}<input class="input input-sm w-full" bind:value={knowledgeTags} /></label>
+                        <div class="flex gap-2 flex-wrap">
+                          <button class="btn btn-outline btn-sm" on:click={() => saveKnowledge()} disabled={!knowledgeName.trim() || !knowledgeDescription.trim()}>{$t('common.save')}</button>
+                          <button class="btn btn-primary btn-sm" on:click={() => saveKnowledge(true)} disabled={!knowledgeName.trim() || !knowledgeDescription.trim()}>{$t('writing.knowledge.saveRevise')}</button>
+                        </div>
+                        <p class="text-sm">{$t('writing.knowledge.select')}</p>
+                        <div class="max-h-48 overflow-y-auto space-y-2">
+                          {#each ($settings?.worldview || []) as entry (entry.id)}
+                            <label class="flex items-start gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-sm" value={entry.id} bind:group={selectedSettings} /><span>{entry.name}</span></label>
+                            {#if selectedSettings.includes(entry.id)}<p class="text-sm whitespace-pre-wrap pl-6">{entry.description}</p>{/if}
+                          {/each}
+                        </div>
+                      </fieldset>
+                    {/if}
+                  <textarea
+                    class="textarea textarea-sm w-full h-20 text-sm"
+                    bind:value={reviseFeedback}
+                    bind:this={reviseTextareaEl}
+                    placeholder={$t('writing.revise.placeholder')}
+                    disabled={$taskRunning}
+                  ></textarea>
+                  <div class="flex justify-between items-center gap-2 flex-wrap">
+                    <span class="text-xs text-base-content/65">
+                        {#if selectedSettings.length || !(isCurrent && ch.status === 'review')}
+                        {$t('writing.revise.hintTargeted')}
+                      {:else}
+                        {$t('writing.revise.hintCurrent')}
+                      {/if}
+                      <span class="ml-1 text-base-content/30">· {$t('writing.revise.quoteHint')}</span>
+                    </span>
+                    <div class="flex gap-2">
+                      <button class="btn btn-ghost btn-xs" on:click={() => { showRevise = false; reviseFeedback = ''; selectedSettings = []; showKnowledge = false; }} disabled={savingKnowledge}>{$t('common.cancel')}</button>
+                      <button class="btn btn-primary btn-xs" on:click={() => doRevise()} disabled={$taskRunning || savingKnowledge || (!reviseFeedback.trim() && !selectedSettings.length)}>{selectedSettings.length ? $t('writing.knowledge.revise') : $t('writing.revise.submit')}</button>
+                    </div>
+                  </div>
+                </div>
+              {/if}
+            </div>
+          </div>
+        {:else}
+          <div class="text-center py-16 text-base-content/65 text-base">{$t('writing.emptySelection')}</div>
+        {/if}
+      </div>
+    </div>
+  </div>
+{/if}
