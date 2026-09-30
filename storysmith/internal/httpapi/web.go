@@ -122,8 +122,9 @@ func StartWebServerWithHandlers(h *Handlers, port, url string) {
 	mux.HandleFunc("POST /api/config/api/test", h.PostAPITest)
 	mux.HandleFunc("GET /api/config/api/models", h.GetOllamaModels)
 
-	// --- Tab: Novel Parameters (NovelWriter integration) ---
+	// --- Novel Parameters tab (NovelWriter integration) ---
 	mux.HandleFunc("GET /api/parameters/options", h.GetParameterOptions)
+	mux.HandleFunc("GET /api/parameters/hints", h.GetParameterHints)
 	mux.HandleFunc("GET /api/parameters", h.GetParameters)
 	mux.HandleFunc("PUT /api/parameters", h.PutParameters)
 
@@ -144,7 +145,7 @@ func StartWebServerWithHandlers(h *Handlers, port, url string) {
 	mux.HandleFunc("POST /api/projects/select", h.PostProjectSelect)
 	mux.HandleFunc("DELETE /api/projects/{name}", h.DeleteProject)
 
-	handler := recoveryMiddleware(corsMiddleware(loggingMiddleware(mux)))
+	handler := recoveryMiddleware(corsMiddleware(loggingMiddleware(withWebUI(mux))))
 
 	srv := &http.Server{
 		Addr:         port,
@@ -416,6 +417,19 @@ func (h *Handlers) GetOllamaModels(w http.ResponseWriter, r *http.Request) {
 // lengths, structures + their beats, bias presets) for rendering the form.
 func (h *Handlers) GetParameterOptions(w http.ResponseWriter, r *http.Request) {
 	h.writeJSON(w, http.StatusOK, genres.GetOptions())
+}
+
+// GetParameterHints returns the cascading hint lists (protagonist types,
+// conflict scales, tones, timeframes, locations) for one genre+subgenre pair.
+func (h *Handlers) GetParameterHints(w http.ResponseWriter, r *http.Request) {
+	g := strings.TrimSpace(r.URL.Query().Get("genre"))
+	s := strings.TrimSpace(r.URL.Query().Get("subgenre"))
+	hints, ok := genres.Hints(g, s)
+	if !ok {
+		h.writeJSON(w, http.StatusOK, genres.SubgenreHints{})
+		return
+	}
+	h.writeJSON(w, http.StatusOK, hints)
 }
 
 // GetParameters returns the current project's novel parameters.

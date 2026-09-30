@@ -176,6 +176,35 @@ type Options struct {
 	GenderBias        map[string]BiasPreset `json:"gender_bias"`
 }
 
+// SubgenreHints bundles the AI-generation hint lists for one subgenre
+// (protagonist types, conflict scales, tones, timeframe/location suggestions).
+type SubgenreHints struct {
+	ProtagonistTypes []string `json:"protagonist_types"`
+	ConflictScales   []string `json:"conflict_scales"`
+	Tones            []string `json:"tones"`
+	Timeframes       []string `json:"timeframes,omitempty"`
+	Locations        []string `json:"locations,omitempty"`
+}
+
+// Hints returns the option lists for a genre+subgenre pair, for cascading
+// dropdowns in the Novel Parameters tab. Unknown pairs yield ok=false.
+func Hints(genre, subgenre string) (SubgenreHints, bool) {
+	c, err := Config(genre, subgenre)
+	if err != nil {
+		return SubgenreHints{}, false
+	}
+	h := SubgenreHints{
+		ProtagonistTypes: c.ProtagonistType,
+		ConflictScales:   c.ConflictScales,
+		Tones:            c.Tones,
+	}
+	if c.SettingLists != nil {
+		h.Timeframes = c.SettingLists["timeframes"]
+		h.Locations = c.SettingLists["locations"]
+	}
+	return h, true
+}
+
 func GetOptions() Options {
 	subs := map[string][]string{}
 	for _, g := range GenreNames() {
