@@ -61,7 +61,7 @@ func newTestServer(t *testing.T) (*Handlers, *httptest.Server, string) {
 	return h, srv, dir
 }
 
-func doJSON(t *testing.T, method, url string, body any) (*http.Response, []byte) {
+func httpDoJSON(t *testing.T, method, url string, body any) (*http.Response, []byte) {
 	t.Helper()
 	var rd io.Reader
 	if body != nil {
@@ -82,7 +82,7 @@ func doJSON(t *testing.T, method, url string, body any) (*http.Response, []byte)
 func TestParameterOptionsCatalogue(t *testing.T) {
 	_, srv, _ := newTestServer(t)
 	defer srv.Close()
-	resp, data := doJSON(t, "GET", srv.URL+"/api/parameters/options", nil)
+	resp, data := httpDoJSON(t, "GET", srv.URL+"/api/parameters/options", nil)
 	if resp.StatusCode != 200 {
 		t.Fatalf("status %d: %s", resp.StatusCode, data)
 	}
@@ -111,12 +111,12 @@ func TestProjectCreateAndParametersRoundTrip(t *testing.T) {
 			"tone": "Cínico", "darkness_level": 4,
 		},
 	}
-	resp, data := doJSON(t, "POST", srv.URL+"/api/projects", body)
+	resp, data := httpDoJSON(t, "POST", srv.URL+"/api/projects", body)
 	if resp.StatusCode != 200 {
 		t.Fatalf("create: %d %s", resp.StatusCode, data)
 	}
 
-	resp, data = doJSON(t, "GET", srv.URL+"/api/parameters", nil)
+	resp, data = httpDoJSON(t, "GET", srv.URL+"/api/parameters", nil)
 	if resp.StatusCode != 200 {
 		t.Fatalf("get params: %d %s", resp.StatusCode, data)
 	}
@@ -130,7 +130,7 @@ func TestProjectCreateAndParametersRoundTrip(t *testing.T) {
 	}
 
 	// Update structure to Hero's Journey (Simplified) (valid for Novella).
-	resp, data = doJSON(t, "PUT", srv.URL+"/api/parameters", map[string]any{"structure": "Hero's Journey (Simplified)"})
+	resp, data = httpDoJSON(t, "PUT", srv.URL+"/api/parameters", map[string]any{"structure": "Hero's Journey (Simplified)"})
 	if resp.StatusCode != 200 {
 		t.Fatalf("put params: %d %s", resp.StatusCode, data)
 	}
@@ -140,13 +140,13 @@ func TestProjectCreateAndParametersRoundTrip(t *testing.T) {
 	}
 
 	// Invalid genre rejected.
-	resp, data = doJSON(t, "PUT", srv.URL+"/api/parameters", map[string]any{"genre": "Space-Western"})
+	resp, data = httpDoJSON(t, "PUT", srv.URL+"/api/parameters", map[string]any{"genre": "Space-Western"})
 	if resp.StatusCode != 400 {
 		t.Errorf("invalid genre should be 400, got %d %s", resp.StatusCode, data)
 	}
 
 	// Structure invalid for the project's length rejected (Freytag is Short Story only).
-	resp, data = doJSON(t, "PUT", srv.URL+"/api/parameters", map[string]any{"structure": "Freytag's Pyramid"})
+	resp, data = httpDoJSON(t, "PUT", srv.URL+"/api/parameters", map[string]any{"structure": "Freytag's Pyramid"})
 	if resp.StatusCode != 400 {
 		t.Errorf("mismatched structure should be 400, got %d %s", resp.StatusCode, data)
 	}
@@ -157,7 +157,7 @@ func TestAPIConfigMaskingAndKeyPreservation(t *testing.T) {
 	defer srv.Close()
 
 	// Save a config with a real key.
-	resp, data := doJSON(t, "PUT", srv.URL+"/api/config/api", map[string]any{
+	resp, data := httpDoJSON(t, "PUT", srv.URL+"/api/config/api", map[string]any{
 		"base_url": "http://localhost:11434/v1", "model": "qwen2.5:14b",
 		"api_key": "sk-supersecret-1234567890", "temperature": 0.8,
 	})
@@ -169,7 +169,7 @@ func TestAPIConfigMaskingAndKeyPreservation(t *testing.T) {
 	}
 
 	// GET returns masked key.
-	resp, data = doJSON(t, "GET", srv.URL+"/api/config/api", nil)
+	resp, data = httpDoJSON(t, "GET", srv.URL+"/api/config/api", nil)
 	var cfg map[string]any
 	json.Unmarshal(data, &cfg)
 	if k, _ := cfg["api_key"].(string); !strings.Contains(k, "...") {
@@ -177,11 +177,11 @@ func TestAPIConfigMaskingAndKeyPreservation(t *testing.T) {
 	}
 
 	// PUT echoing the masked value keeps the stored key.
-	doJSON(t, "PUT", srv.URL+"/api/config/api", map[string]any{
+	httpDoJSON(t, "PUT", srv.URL+"/api/config/api", map[string]any{
 		"base_url": "http://localhost:11434/v1", "model": "llama3.1",
 		"api_key": cfg["api_key"], "temperature": 0.9,
 	})
-	_, data2 := doJSON(t, "GET", srv.URL+"/api/config/api", nil)
+	_, data2 := httpDoJSON(t, "GET", srv.URL+"/api/config/api", nil)
 	var cfg2 map[string]any
 	json.Unmarshal(data2, &cfg2)
 	if k, _ := cfg2["api_key"].(string); k != cfg["api_key"] {
@@ -202,7 +202,7 @@ func TestGetOllamaModelsOfflineIsGraceful(t *testing.T) {
 	_, srv, _ := newTestServer(t)
 	defer srv.Close()
 	// Connection refused → must return empty list, not an error.
-	resp, data := doJSON(t, "GET", srv.URL+"/api/config/api/models?base_url=http://localhost:1/v1", nil)
+	resp, data := httpDoJSON(t, "GET", srv.URL+"/api/config/api/models?base_url=http://localhost:1/v1", nil)
 	if resp.StatusCode != 200 {
 		t.Fatalf("offline models should degrade gracefully, got %d %s", resp.StatusCode, data)
 	}
@@ -216,7 +216,7 @@ func TestGetOllamaModelsOfflineIsGraceful(t *testing.T) {
 func TestParametersRequireProject(t *testing.T) {
 	_, srv, _ := newTestServer(t)
 	defer srv.Close()
-	resp, data := doJSON(t, "GET", srv.URL+"/api/parameters", nil)
+	resp, data := httpDoJSON(t, "GET", srv.URL+"/api/parameters", nil)
 	if resp.StatusCode != 400 {
 		t.Errorf("expected 400 select-project error, got %d %s", resp.StatusCode, data)
 	}

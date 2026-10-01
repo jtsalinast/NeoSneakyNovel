@@ -40,6 +40,18 @@ func NovelPromptBlock(story config.StoryConfig, lang string) string {
 	}
 
 	add("书名", "Title", story.Title)
+	if core := strings.TrimSpace(story.CorePrompt); core != "" {
+		add("核心设定", "Core premise", core)
+	}
+	if len(story.Themes) > 0 {
+		add("主题", "Themes", strings.Join(story.Themes, ", "))
+	}
+	if len(story.MustInclude) > 0 {
+		add("必须包含", "Must include", strings.Join(story.MustInclude, ", "))
+	}
+	if len(story.Avoid) > 0 {
+		add("须避免", "Avoid", strings.Join(story.Avoid, ", "))
+	}
 	if story.Genre != "" {
 		g := story.Genre
 		if story.Subgenre != "" {

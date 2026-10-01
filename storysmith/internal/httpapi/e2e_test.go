@@ -103,8 +103,7 @@ func doJSON(t *testing.T, h *Handlers, method, path string, body any) (*httptest
 }
 
 func buildMuxForTest(h *Handlers) *http.ServeMux {
-	mux := newTestMux(h)
-	return mux
+	return buildMux(h)
 }
 
 func waitFor(t *testing.T, cond func() bool, msg string) {
