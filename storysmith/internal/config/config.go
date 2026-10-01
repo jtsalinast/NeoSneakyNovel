@@ -33,11 +33,15 @@ type Config struct {
 // conflict tuning) integrated from NovelWriter-style tooling. See
 // internal/genres for the option catalogue these fields draw from.
 type StoryConfig struct {
-	Type                  string `json:"type"`
-	Title                 string `json:"title"`
-	TargetWordsPerChapter int    `json:"target_words_per_chapter"`
-	WritingStyle          string `json:"writing_style"`
-	WritingPOV            string `json:"writing_pov"` // 叙述视角，如第一人称女主、第三人称限知等
+	Type                  string   `json:"type"`
+	Title                 string   `json:"title"`
+	TargetWordsPerChapter int      `json:"target_words_per_chapter"`
+	WritingStyle          string   `json:"writing_style"`
+	WritingPOV            string   `json:"writing_pov"` // 叙述视角，如第一人称女主、第三人称限知等
+	CorePrompt            string   `json:"core_prompt,omitempty"`
+	Themes                []string `json:"themes,omitempty"`
+	MustInclude           []string `json:"must_include,omitempty"`
+	Avoid                 []string `json:"avoid,omitempty"`
 
 	// ----- Novel Parameters (NovelWriter integration) -----
 	Genre              string   `json:"genre,omitempty"`               // e.g. "Fantasy", "Sci-Fi"

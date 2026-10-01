@@ -400,6 +400,27 @@ type streamDelta struct {
 	Usage *tokenUsage `json:"usage,omitempty"`
 }
 
+// ProgressFunc receives streaming deltas from an LLM call running under the
+// current task context (used by SSE-backed handlers to show live output).
+type ProgressFunc func(delta string)
+
+type progressCtxKey struct{}
+
+func WithProgress(ctx context.Context, fn ProgressFunc) context.Context {
+	if fn == nil {
+		return ctx
+	}
+	return context.WithValue(ctx, progressCtxKey{}, fn)
+}
+
+func progressFromContext(ctx context.Context) ProgressFunc {
+	if ctx == nil {
+		return nil
+	}
+	fn, _ := ctx.Value(progressCtxKey{}).(ProgressFunc)
+	return fn
+}
+
 func CallAPIStream(ctx context.Context, apiCfg *config.APIConfig, system, user string, onChunk func(string)) (string, error) {
 	result, err := CallAPIStreamMessages(ctx, apiCfg, []Message{
 		{Role: "system", Content: system},
@@ -409,7 +430,15 @@ func CallAPIStream(ctx context.Context, apiCfg *config.APIConfig, system, user s
 }
 
 // CallAPIStreamMessages 以完整的多轮消息数组调用 API（流式）。
+// If the context carries a ProgressFunc (see WithProgress), every stream
+// delta is also forwarded to it — this powers live token streaming over SSE.
 func CallAPIStreamMessages(ctx context.Context, apiCfg *config.APIConfig, messages []Message, onChunk func(string)) (CompletionResult, error) {
+	if fn := progressFromContext(ctx); fn != nil && onChunk == nil {
+		onChunk = fn
+	} else if fn != nil {
+		outer := onChunk
+		onChunk = func(delta string) { outer(delta); fn(delta) }
+	}
 	if err := validateContextBudget(apiCfg, messages); err != nil {
 		return CompletionResult{}, err
 	}
